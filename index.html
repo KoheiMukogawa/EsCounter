@@ -66,7 +66,7 @@
     .search-input{width:100%;height:28px;padding:0 10px 0 28px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;outline:none;transition:border-color .15s,box-shadow .15s;box-sizing:border-box;}
     .search-input::placeholder{color:var(--text3);}
     .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(108,143,255,.15);}
-    .search-icon{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none;}
+    .search-icon{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;display:flex;align-items:center;}
     .search-results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);max-height:320px;overflow-y:auto;z-index:200;display:none;}
     .search-results.open{display:block;}
     .search-result-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;}
@@ -115,62 +115,19 @@
     .btn-zoom:hover{background:var(--surface2);color:var(--text2);}
     .zoom-pct{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);padding:0 6px;min-width:38px;text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border);line-height:24px;}
 
-    /* ── Company tabs ── */
-    .company-tabs{display:flex;flex-direction:column;gap:1px;padding:4px 0;background:var(--sidebar-bg);border-bottom:1px solid var(--border);max-height:38vh;overflow-y:auto;scrollbar-width:none;flex-shrink:0;}
-    .company-tabs::-webkit-scrollbar{display:none;}
-    .ctab{display:flex;align-items:center;gap:5px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;border-left:2px solid transparent;transition:all .15s;user-select:none;}
-    .ctab:hover{color:var(--text2);background:rgba(108,143,255,.04);}
-    .ctab.active{color:var(--text);border-left-color:var(--accent);background:rgba(108,143,255,.06);}
-    .ctab-name{outline:none;background:transparent;border:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;cursor:pointer;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .ctab.active .ctab-name{cursor:text;}
-    .ctab-deadline{font-size:10px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:10px;border:1px solid var(--border);color:var(--text3);flex-shrink:0;white-space:nowrap;}
-    .ctab-deadline.warn{color:var(--warn);border-color:var(--warn);background:rgba(251,191,36,.08);}
-    .ctab-deadline.danger{color:var(--danger);border-color:var(--danger);background:rgba(248,113,113,.08);}
-    .ctab-done-badge{font-size:11px;color:var(--ok);flex-shrink:0;}
-    .ctab-submitted-badge{font-size:10px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:10px;border:1px solid var(--ok);color:var(--ok);background:rgba(52,211,153,.08);flex-shrink:0;}
-    .ctab.submitted .ctab-name{color:var(--text3);}
-    .ctab.submitted{opacity:.7;}
-
-    .ctab.all-done .ctab-name{color:var(--ok);}
-    .ctab.all-done{border-left-color:var(--ok)!important;}
-
-    .ctab-close{opacity:0;color:var(--text3);font-size:13px;transition:opacity .15s;flex-shrink:0;}
-    .ctab:hover .ctab-close{opacity:1;}
-    .ctab-close:hover{color:var(--danger);}
-    .ctab-add{padding:8px 14px;font-size:12px;color:var(--text3);cursor:pointer;transition:color .15s;}
-    .ctab-add:hover{color:var(--accent);}
+    /* （企業タブの旧CSSはツリー化に伴い .ctree-* へ移行） */
 
     /* ── Info panel ── */
 
 
-    /* ── Sidebar info ── */
-    .sidebar-info{border-top:1px solid var(--border);padding:12px 14px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
-    .sinfo-row{display:flex;align-items:center;gap:8px;}
-    .sinfo-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-weight:500;width:34px;flex-shrink:0;}
-    .sinfo-value{font-size:12px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .sinfo-value.empty{color:var(--text3);font-style:italic;}
-    .btn-open-url-sm{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;flex:1;flex-direction:column;line-height:1.4;}
-    .btn-open-url-sm:hover{background:rgba(108,143,255,.1);}
-    .btn-open-url-hint{font-size:9px;color:var(--text3);letter-spacing:.02em;}
     /* ── Copy toast ── */
     #copyToast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#222;color:#fff;font-size:12px;padding:8px 18px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity .2s;z-index:9999;white-space:nowrap;}
-    .sinfo-actions{display:flex;gap:6px;margin-top:4px;}
-    .btn-edit-sm{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
-    .btn-edit-sm:hover{border-color:var(--accent);color:var(--accent);}
-    .btn-submit-sm{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--ok);background:transparent;color:var(--ok);cursor:pointer;transition:all .15s;flex:1;white-space:nowrap;}
-    .btn-submit-sm:hover{background:rgba(52,211,153,.1);}
-    .btn-submit-sm.active{background:rgba(52,211,153,.12);font-weight:600;}
-    /* ── Selection result ── */
-    .result-row{display:flex;gap:4px;margin-top:6px;}
+    /* ── Selection result (company-bar で再利用) ── */
     .btn-result{font-size:11px;padding:4px 0;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;flex:1;white-space:nowrap;}
     .btn-result:hover{border-color:var(--text2);color:var(--text2);}
     .btn-result.pass.active{border-color:var(--accent);background:rgba(108,143,255,.12);color:var(--accent);font-weight:600;}
     .btn-result.fail.active{border-color:var(--danger);background:rgba(248,113,113,.12);color:var(--danger);font-weight:600;}
     .btn-result.pending.active{border-color:var(--warn);background:rgba(251,191,36,.12);color:var(--warn);font-weight:600;}
-    .ctab-result{font-size:10px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:10px;border:1px solid;flex-shrink:0;white-space:nowrap;}
-    .ctab-result.pass{color:var(--accent);border-color:var(--accent);background:rgba(108,143,255,.08);}
-    .ctab-result.fail{color:var(--danger);border-color:var(--danger);background:rgba(248,113,113,.08);}
-    .ctab-result.pending{color:var(--warn);border-color:var(--warn);background:rgba(251,191,36,.08);}
     /* ── Body ── */
     .app-body{display:flex;flex:1;overflow:hidden;}
 
@@ -179,33 +136,71 @@
     .sidebar-header{padding:10px 14px 8px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
     .sidebar-add{font-size:16px;cursor:pointer;color:var(--text3);transition:color .15s;line-height:1;}
     .sidebar-add:hover{color:var(--accent);}
-    .sidebar-list{flex:1;overflow-y:auto;padding:6px 0;}
-    .sidebar-list::-webkit-scrollbar{width:4px;}
-    .sidebar-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-    .qitem{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;transition:background .12s;border-left:2px solid transparent;}
-    .qitem:hover{background:rgba(108,143,255,.05);}
-    .qitem.active{background:rgba(108,143,255,.08);border-left-color:var(--accent);}
-    .qitem-check{width:16px;height:16px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:9px;background:transparent;}
-    .qitem-check:hover{border-color:var(--ok);}
-    .qitem-check.done{border-color:var(--ok);background:var(--ok);color:#fff;}
-    .qitem-body{flex:1;min-width:0;}
-    .qitem-label{font-size:12px;font-weight:500;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
-    .qitem.active .qitem-label{color:var(--text);}
-    .qitem-check.done~.qitem-body .qitem-label{color:var(--ok);}
-    .qitem-meta{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px;}
-    .qitem-del{opacity:0;font-size:11px;color:var(--text3);cursor:pointer;transition:opacity .15s;flex-shrink:0;}
-    .qitem:hover .qitem-del{opacity:1;}
-    .qitem-del:hover{color:var(--danger);}
     /* drag handles */
-    .drag-handle{opacity:0;cursor:grab;color:var(--text3);font-size:11px;flex-shrink:0;transition:opacity .15s;user-select:none;padding:0 2px;}
-    .qitem:hover .drag-handle{opacity:.5;}
-    .drag-handle:active{cursor:grabbing;}
-    .qitem.dragging{opacity:.4;background:rgba(108,143,255,.1);}
-    .qitem.drag-over{border-top:2px solid var(--accent);}
-    .ctab.dragging{opacity:.4;}
-    .ctab.drag-over{border-left:2px solid var(--accent);}
     .draft-pill.dragging{opacity:.4;}
     .draft-pill.drag-over{border-left:2px solid var(--accent);}
+
+    /* ── Company tree (企業＝設問) ── */
+    .company-tree{flex:1;overflow-y:auto;padding:4px 0;}
+    .company-tree::-webkit-scrollbar{width:4px;}
+    .company-tree::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+    .ctree-co{display:flex;align-items:center;gap:5px;padding:7px 12px;cursor:pointer;border-left:2px solid transparent;transition:background .12s;user-select:none;}
+    .ctree-co:hover{background:rgba(108,143,255,.05);}
+    .ctree-co.active{border-left-color:var(--accent);background:rgba(108,143,255,.07);}
+    .ctree-caret{font-size:9px;color:var(--text3);transition:transform .15s;flex-shrink:0;width:9px;text-align:center;}
+    .ctree-caret.open{transform:rotate(90deg);}
+    .ctree-co-name{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;outline:none;background:transparent;border:none;font-family:inherit;}
+    .ctree-co.active .ctree-co-name{color:var(--text);cursor:text;}
+    .ctree-co.submitted .ctree-co-name{color:var(--text3);}
+    .ctree-prog{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);flex-shrink:0;}
+    .ctree-prog.all{color:var(--ok);}
+    .ctree-badge{font-size:10px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:10px;border:1px solid var(--border);color:var(--text3);flex-shrink:0;white-space:nowrap;}
+    .ctree-badge.dl.warn{color:var(--warn);border-color:var(--warn);background:rgba(251,191,36,.08);}
+    .ctree-badge.dl.danger{color:var(--danger);border-color:var(--danger);background:rgba(248,113,113,.08);}
+    .ctree-badge.submitted{color:var(--ok);border-color:var(--ok);background:rgba(52,211,153,.08);}
+    .ctree-badge.pass{color:var(--accent);border-color:var(--accent);background:rgba(108,143,255,.08);}
+    .ctree-badge.pending{color:var(--warn);border-color:var(--warn);background:rgba(251,191,36,.08);}
+    .ctree-badge.fail{color:var(--danger);border-color:var(--danger);background:rgba(248,113,113,.08);}
+    .ctree-close{opacity:0;color:var(--text3);font-size:13px;flex-shrink:0;transition:opacity .15s;}
+    .ctree-co:hover .ctree-close{opacity:1;}
+    .ctree-close:hover{color:var(--danger);}
+    .ctree-co.dragging{opacity:.4;}
+    .ctree-co.drag-over{border-left-color:var(--accent);background:rgba(108,143,255,.12);}
+    .ctree-qs{padding:2px 0 8px;}
+    .ctree-q{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 27px;cursor:pointer;border-left:2px solid transparent;transition:background .12s;}
+    .ctree-q:hover{background:rgba(108,143,255,.05);}
+    .ctree-q.active{background:rgba(108,143,255,.08);border-left-color:var(--accent);}
+    .ctree-q-check{width:15px;height:15px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text3);}
+    .ctree-q-check.done{border-color:var(--ok);background:var(--ok);color:#fff;}
+    .ctree-q-body{flex:1;min-width:0;}
+    .ctree-q-label{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+    .ctree-q.active .ctree-q-label{color:var(--text);font-weight:500;}
+    .ctree-q-check.done~.ctree-q-body .ctree-q-label{color:var(--ok);}
+    .ctree-q-meta{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px;}
+    .ctree-q-del{opacity:0;font-size:11px;color:var(--text3);cursor:pointer;flex-shrink:0;transition:opacity .15s;}
+    .ctree-q:hover .ctree-q-del{opacity:1;}
+    .ctree-q-del:hover{color:var(--danger);}
+    .ctree-q.dragging{opacity:.4;}
+    .ctree-q.drag-over{border-top:2px solid var(--accent);}
+    .ctree-addq{padding:6px 12px 6px 27px;font-size:11px;color:var(--text3);cursor:pointer;transition:color .15s;}
+    .ctree-addq:hover{color:var(--accent);}
+
+    /* ── Company bar (エディタ上部の企業ヘッダ) ── */
+    .company-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 2px 12px;margin-bottom:14px;border-bottom:1px solid var(--border);}
+    .cbar-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex:1;min-width:0;}
+    .cbar-chip{font-size:12px;color:var(--text2);white-space:nowrap;}
+    .cbar-chip.warn{color:var(--warn);}
+    .cbar-chip.danger{color:var(--danger);font-weight:600;}
+    .cbar-chip.mono{font-family:'DM Mono',monospace;color:var(--text3);}
+    .cbar-link{font-size:12px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+    .cbar-link:hover{text-decoration:underline;}
+    .cbar-hint{font-size:9px;color:var(--text3);border:1px solid var(--border);border-radius:4px;padding:0 4px;}
+    .cbar-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+    .cbar-btn{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+    .cbar-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .cbar-btn.active{border-color:var(--ok);color:var(--ok);background:rgba(52,211,153,.1);font-weight:600;}
+    .cbar-sep{width:1px;height:18px;background:var(--border);}
+    .company-bar .btn-result{flex:0 0 auto;padding:4px 10px;}
 
     /* ── Main ── */
     .main-content{flex:1;overflow-y:auto;padding:24px;}
@@ -240,7 +235,6 @@
     .btn-draft:disabled{opacity:.55;cursor:default;border-color:var(--border);color:var(--text3);}
     .q-textarea{display:block;width:100%;background:transparent;border:none;outline:none;resize:none;padding:18px 22px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:calc(14px * var(--textarea-zoom,1));line-height:1.9;min-height:220px;}
     .q-textarea::placeholder{color:var(--text3);}
-    .q-footer{padding:12px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2);}
     .counter-display{display:flex;align-items:baseline;gap:4px;}
     .counter-current{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;line-height:1;transition:color .2s;}
     .counter-sep,.counter-limit{font-family:'DM Mono',monospace;font-size:14px;color:var(--text2);}
@@ -254,10 +248,12 @@
     .btn-done.done{border-color:var(--ok);background:var(--ok);color:#fff;}
     .btn-copy{position:absolute;top:10px;right:12px;width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:0;transition:all .15s;}
     .q-textarea-wrap{position:relative;}
+    .q-toolbar{display:flex;align-items:center;gap:14px;padding:10px 22px 8px;}
+    .q-toolbar .progress-wrap{margin:0;}
+    .q-toolbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
     .q-textarea-wrap:hover .btn-copy{opacity:1;}
     .btn-copy:hover{border-color:var(--accent);color:var(--accent);background:var(--surface);}
     .btn-copy.copied{border-color:var(--ok);color:var(--ok);background:var(--surface);}
-    .footer-copy-btns{display:flex;align-items:center;gap:6px;}
     .btn-copy-qa,.btn-copy-all{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;white-space:nowrap;}
     .btn-copy-qa:hover,.btn-copy-all:hover{border-color:var(--accent);color:var(--accent);}
     .btn-copy-qa.copied,.btn-copy-all.copied{border-color:var(--ok);color:var(--ok);}
@@ -447,7 +443,7 @@
     <div class="header-top">
       <span style="font-size:13px;font-weight:700;letter-spacing:.03em;"><span style="color:#2563EB;">ES</span><span style="color:var(--text3);"> </span><span style="color:#2563EB;">M</span><span style="color:var(--text3);">anager</span></span>
       <div class="search-wrap" id="searchWrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg></span>
         <input class="search-input" id="searchInput" type="text" placeholder="ESを検索...">
         <div class="search-results" id="searchResults"></div>
       </div>
@@ -475,7 +471,7 @@
               <span class="user-dropdown-email" id="userEmail"></span>
             </div>
             <button class="menu-item" id="btnMaterial">📚 素材庫</button>
-            <button class="menu-item" id="btnGuide"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;margin-right:4px"><path d="M12 2.5V21.5M2.5 12H21.5M5.4 5.4 18.6 18.6M18.6 5.4 5.4 18.6" stroke="#D97757" stroke-width="2" stroke-linecap="round"/></svg>Claudeへの指示</button>
+            <button class="menu-item" id="btnGuide"><svg viewBox="0 0 12 8" width="17" height="12" shape-rendering="crispEdges" aria-hidden="true" style="vertical-align:-2px;margin-right:7px"><rect x="2" y="0" width="8" height="1" fill="#D77655"/><rect x="2" y="1" width="1" height="1" fill="#D77655"/><rect x="3" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="4" y="1" width="4" height="1" fill="#D77655"/><rect x="8" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="9" y="1" width="1" height="1" fill="#D77655"/><rect x="0" y="2" width="12" height="1" fill="#D77655"/><rect x="0" y="3" width="12" height="1" fill="#D77655"/><rect x="2" y="4" width="8" height="1" fill="#D77655"/><rect x="2" y="5" width="8" height="1" fill="#D77655"/><rect x="2" y="6" width="1" height="1" fill="#D77655"/><rect x="4" y="6" width="1" height="1" fill="#D77655"/><rect x="7" y="6" width="1" height="1" fill="#D77655"/><rect x="9" y="6" width="1" height="1" fill="#D77655"/><rect x="2" y="7" width="1" height="1" fill="#D77655"/><rect x="4" y="7" width="1" height="1" fill="#D77655"/><rect x="7" y="7" width="1" height="1" fill="#D77655"/><rect x="9" y="7" width="1" height="1" fill="#D77655"/></svg>Claudeへの指示</button>
             <button class="menu-item" id="btnHelp">？ 使い方</button>
             <button class="btn-logout" id="btnLogout">ログアウト</button>
           </div>
@@ -490,15 +486,10 @@
         <span>企業</span>
         <span class="sidebar-add" id="companyAdd" title="企業を追加">＋</span>
       </div>
-      <div class="company-tabs" id="companyTabs"></div>
-      <div class="sidebar-header">
-        <span>設問</span>
-        <span class="sidebar-add" id="questionAdd" title="設問を追加">＋</span>
-      </div>
-      <div class="sidebar-list" id="sidebarList"></div>
-      <div class="sidebar-info" id="sidebarInfo" style="display:none;"></div>
+      <div class="company-tree" id="companyTree"></div>
     </div>
     <div class="main-content" id="mainContent">
+      <div class="company-bar" id="companyBar" style="display:none;"></div>
       <div class="empty-state" id="emptyState">
         <div class="big">✏️</div>
         <p id="emptyMsg">左の <strong>＋ 新規企業</strong> で企業を追加してください</p>
@@ -563,7 +554,7 @@
 <div class="modal-bg" id="guideBg">
   <div class="modal" style="max-width:560px;">
     <div class="modal-head">
-      <h2><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;margin-right:5px"><path d="M12 2.5V21.5M2.5 12H21.5M5.4 5.4 18.6 18.6M18.6 5.4 5.4 18.6" stroke="#D97757" stroke-width="2" stroke-linecap="round"/></svg>Claudeへの指示</h2>
+      <h2><svg viewBox="0 0 12 8" width="24" height="16" shape-rendering="crispEdges" aria-hidden="true" style="vertical-align:-2px;margin-right:8px"><rect x="2" y="0" width="8" height="1" fill="#D77655"/><rect x="2" y="1" width="1" height="1" fill="#D77655"/><rect x="3" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="4" y="1" width="4" height="1" fill="#D77655"/><rect x="8" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="9" y="1" width="1" height="1" fill="#D77655"/><rect x="0" y="2" width="12" height="1" fill="#D77655"/><rect x="0" y="3" width="12" height="1" fill="#D77655"/><rect x="2" y="4" width="8" height="1" fill="#D77655"/><rect x="2" y="5" width="8" height="1" fill="#D77655"/><rect x="2" y="6" width="1" height="1" fill="#D77655"/><rect x="4" y="6" width="1" height="1" fill="#D77655"/><rect x="7" y="6" width="1" height="1" fill="#D77655"/><rect x="9" y="6" width="1" height="1" fill="#D77655"/><rect x="2" y="7" width="1" height="1" fill="#D77655"/><rect x="4" y="7" width="1" height="1" fill="#D77655"/><rect x="7" y="7" width="1" height="1" fill="#D77655"/><rect x="9" y="7" width="1" height="1" fill="#D77655"/></svg>Claudeへの指示</h2>
       <button class="modal-close" id="guideClose">×</button>
     </div>
     <div class="modal-body">
@@ -925,7 +916,7 @@
   })();
 
   // ── Render ──
-  function render(){renderCompanyTabs();renderInfoPanel();renderSidebar();renderMain();renderTitle();renderUsage();}
+  function render(){renderCompanyTree();renderCompanyBar();renderMain();renderTitle();renderUsage();}
 
   function renderTitle(){
     document.title='ES Manager';
@@ -943,11 +934,13 @@
     return{cls:'',label:`残${diff}日`};
   }
 
-  // ── Company tabs ──
-  function renderCompanyTabs(){
-    const bar=document.getElementById('companyTabs');
-    bar.querySelectorAll('.ctab').forEach(t=>t.remove());
-    // sort: normal → pass/pending/submitted → fail → expired
+  // ── Company tree (企業＝設問の折りたたみツリー) ──
+  function renderCompanyTabs(){renderCompanyTree();} // 互換: 既存呼び出し用
+  function renderCompanyTree(){
+    const tree=document.getElementById('companyTree');
+    if(!tree) return;
+    tree.innerHTML='';
+    // sort: normal → pass/pending/submitted → fail/expired
     const today=new Date(); today.setHours(0,0,0,0);
     const sortRank=c=>{
       if(c.submitted&&c.result==='fail') return 2;
@@ -960,118 +953,165 @@
       return companies.indexOf(a)-companies.indexOf(b);
     });
     sorted.forEach(c=>{
-      const tab=document.createElement('div');
-      const isExpired=c.deadline&&new Date(c.deadline)<today&&!c.submitted;
-      tab.className='ctab'+(c.id===activeCompanyId?' active':'')+(c.submitted?' submitted':'');
+      const isActive=c.id===activeCompanyId;
+      const row=document.createElement('div');
+      row.className='ctree-co'+(isActive?' active':'')+(c.submitted?' submitted':'');
+
+      const caret=document.createElement('span');
+      caret.className='ctree-caret'+(isActive?' open':'');caret.textContent='▶';
+      row.appendChild(caret);
 
       const nameEl=document.createElement('span');
-      nameEl.className='ctab-name';
-      nameEl.contentEditable=c.id===activeCompanyId?'true':'false';
+      nameEl.className='ctree-co-name';
+      nameEl.contentEditable=isActive?'true':'false';
       nameEl.textContent=c.name||'企業名';
       nameEl.addEventListener('input',()=>{c.name=nameEl.textContent.trim();renderTitle();scheduleSave();});
       nameEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();nameEl.blur();}});
-      nameEl.addEventListener('click',e=>{if(c.id===activeCompanyId) e.stopPropagation();});
-      tab.appendChild(nameEl);
+      nameEl.addEventListener('click',e=>{if(isActive) e.stopPropagation();});
+      row.appendChild(nameEl);
 
-      if(c.submitted){
-        if(c.result){
-          const resultMap={pass:{label:'通過',cls:'pass'},pending:{label:'結果待',cls:'pending'},fail:{label:'落選',cls:'fail'}};
-          const r=resultMap[c.result];
-          const rb=document.createElement('span');
-          rb.className='ctab-result '+r.cls;rb.textContent=r.label;
-          tab.appendChild(rb);
-        } else {
-          const db=document.createElement('span');
-          db.className='ctab-submitted-badge';db.textContent='提出済';
-          tab.appendChild(db);
-        }
-      }
-      if(c.deadline&&!c.submitted){
+      // ステータス: 結果/提出 → 締切 のいずれか1つ
+      if(c.submitted&&c.result){
+        const resultMap={pass:{label:'通過',cls:'pass'},pending:{label:'結果待',cls:'pending'},fail:{label:'落選',cls:'fail'}};
+        const r=resultMap[c.result];
+        const rb=document.createElement('span');rb.className='ctree-badge '+r.cls;rb.textContent=r.label;row.appendChild(rb);
+      } else if(c.submitted){
+        const db=document.createElement('span');db.className='ctree-badge submitted';db.textContent='提出済';row.appendChild(db);
+      } else if(c.deadline){
         const dl=deadlineState(c.deadline);
-        if(dl.label){
-          const badge=document.createElement('span');
-          badge.className='ctab-deadline '+dl.cls;
-          badge.textContent=dl.label;
-          tab.appendChild(badge);
-        }
+        if(dl.label){const badge=document.createElement('span');badge.className='ctree-badge dl '+dl.cls;badge.textContent=dl.label;row.appendChild(badge);}
       }
-      const cls=document.createElement('span');
-      cls.className='ctab-close';cls.textContent='×';
-      cls.addEventListener('click',e=>{e.stopPropagation();removeCompany(c.id);});
-      tab.appendChild(cls);
-      tab.draggable=true;
-      tab.dataset.cid=c.id;
-      tab.addEventListener('dragstart',e=>{e.dataTransfer.setData('cid',c.id);tab.classList.add('dragging');});
-      tab.addEventListener('dragend',()=>tab.classList.remove('dragging'));
-      tab.addEventListener('dragover',e=>{e.preventDefault();tab.classList.add('drag-over');});
-      tab.addEventListener('dragleave',()=>tab.classList.remove('drag-over'));
-      tab.addEventListener('drop',e=>{
-        e.preventDefault();tab.classList.remove('drag-over');
+      // 達成度 n/m
+      const qs=c.questions||[];
+      if(qs.length){
+        const doneCount=qs.filter(q=>(q.drafts||[]).some(d=>d.done)).length;
+        const prog=document.createElement('span');
+        prog.className='ctree-prog'+(doneCount===qs.length?' all':'');prog.textContent=`${doneCount}/${qs.length}`;
+        row.appendChild(prog);
+      }
+
+      const closeEl=document.createElement('span');
+      closeEl.className='ctree-close';closeEl.textContent='×';
+      closeEl.addEventListener('click',e=>{e.stopPropagation();removeCompany(c.id);});
+      row.appendChild(closeEl);
+
+      row.draggable=true;row.dataset.cid=c.id;
+      row.addEventListener('dragstart',e=>{e.dataTransfer.setData('cid',c.id);row.classList.add('dragging');});
+      row.addEventListener('dragend',()=>row.classList.remove('dragging'));
+      row.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('cid')){e.preventDefault();row.classList.add('drag-over');}});
+      row.addEventListener('dragleave',()=>row.classList.remove('drag-over'));
+      row.addEventListener('drop',e=>{
+        e.preventDefault();row.classList.remove('drag-over');
         const fromId=e.dataTransfer.getData('cid');
-        const toId=c.id;
-        if(fromId===toId) return;
-        const fi=companies.findIndex(x=>x.id===fromId);
-        const ti=companies.findIndex(x=>x.id===toId);
+        if(!fromId) return; const toId=c.id; if(fromId===toId) return;
+        const fi=companies.findIndex(x=>x.id===fromId);const ti=companies.findIndex(x=>x.id===toId);
+        if(fi<0||ti<0) return;
         const [moved]=companies.splice(fi,1);companies.splice(ti,0,moved);
-        renderCompanyTabs();scheduleSave();
+        renderCompanyTree();scheduleSave();
       });
-      tab.addEventListener('click',()=>{if(activeCompanyId!==c.id){activeCompanyId=c.id;render();scheduleSave();}});
-      bar.appendChild(tab);
+      row.addEventListener('click',()=>{if(activeCompanyId!==c.id){activeCompanyId=c.id;render();scheduleSave();}});
+      tree.appendChild(row);
+
+      // アクティブ企業の設問を展開
+      if(isActive){
+        const qwrap=document.createElement('div');qwrap.className='ctree-qs';
+        qs.forEach((q,i)=>qwrap.appendChild(buildQItem(c,q,i)));
+        const add=document.createElement('div');add.className='ctree-addq';add.textContent='＋ 設問を追加';
+        add.addEventListener('click',addQuestion);
+        qwrap.appendChild(add);
+        tree.appendChild(qwrap);
+      }
     });
   }
 
-  // ── Sidebar Info ──
-  function renderInfoPanel(){renderSidebarInfo();}
-  function renderSidebarInfo(){
-    const el=document.getElementById('sidebarInfo');
+  function buildQItem(c,q,i){
+    const d=activeDraftForQ(q);
+    const count=countChars(d?d.text:'');
+    const item=document.createElement('div');
+    item.className='ctree-q'+(q.id===c.activeQId?' active':'');
+
+    const qDone=(q.drafts||[]).some(x=>x.done);
+    const chk=document.createElement('span');
+    chk.className='ctree-q-check'+(qDone?' done':'');chk.textContent=qDone?'✓':'';
+    chk.title=qDone?'完了済み（草案にチェックあり）':'草案でチェックをつけると完了になります';
+    item.appendChild(chk);
+
+    const body=document.createElement('div');body.className='ctree-q-body';
+    const lbl=document.createElement('div');lbl.className='ctree-q-label';
+    lbl.textContent=q.label?q.label:`設問 ${i+1}`;
+    const meta=document.createElement('div');meta.className='ctree-q-meta';
+    if(q.limit>0){const rem=q.limit-count;meta.textContent=rem>=0?`${count}/${q.limit}`:`${count}/${q.limit} (+${-rem})`;}
+    else {meta.textContent=count>0?`${count}字`:'未入力';}
+    body.appendChild(lbl);body.appendChild(meta);
+    item.appendChild(body);
+
+    const del=document.createElement('span');
+    del.className='ctree-q-del';del.textContent='×';
+    del.addEventListener('click',e=>{e.stopPropagation();if(confirm('この設問を削除しますか？')) removeQuestion(c.id,q.id);});
+    item.appendChild(del);
+
+    item.draggable=true;item.dataset.qid=q.id;
+    item.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('qid',q.id);item.classList.add('dragging');});
+    item.addEventListener('dragend',()=>item.classList.remove('dragging'));
+    item.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('qid')){e.preventDefault();e.stopPropagation();item.classList.add('drag-over');}});
+    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop',e=>{
+      e.preventDefault();e.stopPropagation();item.classList.remove('drag-over');
+      const fromId=e.dataTransfer.getData('qid');
+      if(!fromId) return; const toId=q.id; if(fromId===toId) return;
+      const qsArr=c.questions;const fi=qsArr.findIndex(x=>x.id===fromId);const ti=qsArr.findIndex(x=>x.id===toId);
+      if(fi<0||ti<0) return;
+      const [moved]=qsArr.splice(fi,1);qsArr.splice(ti,0,moved);
+      renderCompanyTree();scheduleSave();
+    });
+    item.addEventListener('click',()=>{c.activeQId=q.id;renderCompanyTree();renderMain();scheduleSave();});
+    return item;
+  }
+
+  // ── Company bar (エディタ上部の企業ヘッダ＝詳細) ──
+  function renderInfoPanel(){renderCompanyBar();}   // 互換
+  function renderSidebarInfo(){renderCompanyBar();}  // 互換
+  function renderCompanyBar(){
+    const el=document.getElementById('companyBar');
+    if(!el) return;
     const c=activeCompany();
-    if(!c){el.style.display='none';return;}
+    if(!c){el.style.display='none';el.innerHTML='';return;}
     el.style.display='flex';
     const fmtDate=dl=>{if(!dl) return null;const d=new Date(dl);return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;};
+    const dl=c.deadline?deadlineState(c.deadline):null;
     el.innerHTML=`
-      <div class="sinfo-row">
-        <span class="sinfo-label">URL</span>
-        ${c.url
-          ? `<a class="btn-open-url-sm" id="sBtnOpenUrl" href="${c.url}" target="_blank" rel="noopener">🔗 マイページを開く${c.loginId?'<span class="btn-open-url-hint">📋 IDを自動コピー</span>':''}</a>`
-          : `<span class="sinfo-value empty">未設定</span>`}
+      <div class="cbar-meta">
+        ${c.deadline?`<span class="cbar-chip${dl&&dl.cls?' '+dl.cls:''}">📅 ${fmtDate(c.deadline)}${dl&&dl.label?` ・${dl.label}`:''}</span>`:''}
+        ${c.url?`<a class="cbar-link" id="cbarUrl" href="${c.url}" target="_blank" rel="noopener">🔗 マイページ${c.loginId?'<span class="cbar-hint">📋 ID</span>':''}</a>`:''}
+        ${c.loginId?`<span class="cbar-chip mono">ID: ${c.loginId}</span>`:''}
       </div>
-      <div class="sinfo-row">
-        <span class="sinfo-label">ID</span>
-        <span class="sinfo-value ${c.loginId?'':'empty'}">${c.loginId||'未設定'}</span>
-      </div>
-      <div class="sinfo-row">
-        <span class="sinfo-label">期限</span>
-        <span class="sinfo-value ${c.deadline?'':'empty'}">${fmtDate(c.deadline)||'未設定'}</span>
-      </div>
-      <div class="sinfo-actions">
-        <button class="btn-edit-sm" id="sBtnEdit">✏ 編集</button>
-        <button class="btn-submit-sm ${c.submitted?'active':''}" id="sBtnSubmit">${c.submitted?'提出済み ✓':'提出済みにする'}</button>
-      </div>
-      ${c.submitted?`<div class="result-row">
-        <button class="btn-result pass${c.result==='pass'?' active':''}" id="sBtnPass">書類通過</button>
-        <button class="btn-result pending${c.result==='pending'?' active':''}" id="sBtnPending">結果待ち</button>
-        <button class="btn-result fail${c.result==='fail'?' active':''}" id="sBtnFail">書類落ち</button>
-      </div>`:''}
-    `;
+      <div class="cbar-actions">
+        <button class="cbar-btn" id="cbarEdit">✏ 編集</button>
+        <button class="cbar-btn ${c.submitted?'active':''}" id="cbarSubmit">${c.submitted?'提出済み ✓':'提出済みにする'}</button>
+        ${c.submitted?`
+        <span class="cbar-sep"></span>
+        <button class="btn-result pass${c.result==='pass'?' active':''}" id="cbarPass">通過</button>
+        <button class="btn-result pending${c.result==='pending'?' active':''}" id="cbarPending">結果待ち</button>
+        <button class="btn-result fail${c.result==='fail'?' active':''}" id="cbarFail">落選</button>`:''}
+      </div>`;
     if(c.url&&c.loginId){
-      document.getElementById('sBtnOpenUrl').addEventListener('click',()=>{
+      document.getElementById('cbarUrl').addEventListener('click',()=>{
         navigator.clipboard.writeText(c.loginId).then(()=>{
           const toast=document.getElementById('copyToast');
-          toast.style.opacity='1';
-          setTimeout(()=>{toast.style.opacity='0';},2000);
+          toast.style.opacity='1';setTimeout(()=>{toast.style.opacity='0';},2000);
         }).catch(()=>{});
       });
     }
-    document.getElementById('sBtnEdit').addEventListener('click',()=>openEditCompanyModal(c));
-    document.getElementById('sBtnSubmit').addEventListener('click',()=>{
+    document.getElementById('cbarEdit').addEventListener('click',()=>openEditCompanyModal(c));
+    document.getElementById('cbarSubmit').addEventListener('click',()=>{
       c.submitted=!c.submitted;
       if(!c.submitted) c.result=null;
-      renderCompanyTabs();renderSidebarInfo();scheduleSave();
+      renderCompanyTree();renderCompanyBar();scheduleSave();
     });
     if(c.submitted){
-      document.getElementById('sBtnPass').addEventListener('click',()=>{c.result=c.result==='pass'?null:'pass';renderCompanyTabs();renderSidebarInfo();scheduleSave();});
-      document.getElementById('sBtnPending').addEventListener('click',()=>{c.result=c.result==='pending'?null:'pending';renderCompanyTabs();renderSidebarInfo();scheduleSave();});
-      document.getElementById('sBtnFail').addEventListener('click',()=>{c.result=c.result==='fail'?null:'fail';renderCompanyTabs();renderSidebarInfo();scheduleSave();});
+      document.getElementById('cbarPass').addEventListener('click',()=>{c.result=c.result==='pass'?null:'pass';renderCompanyTree();renderCompanyBar();scheduleSave();});
+      document.getElementById('cbarPending').addEventListener('click',()=>{c.result=c.result==='pending'?null:'pending';renderCompanyTree();renderCompanyBar();scheduleSave();});
+      document.getElementById('cbarFail').addEventListener('click',()=>{c.result=c.result==='fail'?null:'fail';renderCompanyTree();renderCompanyBar();scheduleSave();});
     }
   }
 
@@ -1087,68 +1127,8 @@
     setTimeout(()=>document.getElementById('newName').focus(),50);
   }
 
-  // ── Sidebar ──
-  function renderSidebar(){
-    const list=document.getElementById('sidebarList');
-    list.innerHTML='';
-    const c=activeCompany();
-    if(!c||!(c.questions||[]).length) return;
-    c.questions.forEach((q,i)=>{
-      const d=activeDraftForQ(q);
-      const count=countChars(d?d.text:'');
-      const state=getState(count,q.limit);
-      const item=document.createElement('div');
-      item.className='qitem'+(q.id===c.activeQId?' active':'');
-
-      const chk=document.createElement('div');
-      const qDone=(q.drafts||[]).some(d=>d.done);
-      chk.className='qitem-check'+(qDone?' done':'');
-      chk.textContent=qDone?'✓':'';
-      chk.title=qDone?'完了済み（草案にチェックあり）':'草案でチェックをつけると完了になります';
-      chk.style.pointerEvents='none';
-      chk.style.opacity=qDone?'1':'0.4';
-
-      const body=document.createElement('div');body.className='qitem-body';
-      const lbl=document.createElement('div');lbl.className='qitem-label';
-      lbl.textContent=q.label?q.label:`設問 ${i+1}`;
-      const meta=document.createElement('div');meta.className='qitem-meta';
-      if(q.limit>0){
-        const rem=q.limit-count;
-        meta.textContent=rem>=0?`${count}/${q.limit} (残${rem}字)`:`${count}/${q.limit} (+${-rem})`;
-      } else {meta.textContent=count>0?`${count}字`:'未入力';}
-      body.appendChild(lbl);body.appendChild(meta);
-
-
-      const del=document.createElement('span');
-      del.className='qitem-del';del.textContent='×';
-      del.addEventListener('click',e=>{e.stopPropagation();if(confirm('この設問を削除しますか？')) removeQuestion(c.id,q.id);});
-
-      // drag handle
-      const dh=document.createElement('span');
-      dh.className='drag-handle';dh.textContent='⋮⋮';dh.title='ドラッグで並び替え';
-      item.appendChild(dh);
-      item.appendChild(chk);item.appendChild(body);item.appendChild(del);
-      item.draggable=true;
-      item.dataset.qid=q.id;
-      item.addEventListener('dragstart',e=>{e.dataTransfer.setData('qid',q.id);item.classList.add('dragging');});
-      item.addEventListener('dragend',()=>item.classList.remove('dragging'));
-      item.addEventListener('dragover',e=>{e.preventDefault();item.classList.add('drag-over');});
-      item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
-      item.addEventListener('drop',e=>{
-        e.preventDefault();item.classList.remove('drag-over');
-        const fromId=e.dataTransfer.getData('qid');
-        const toId=q.id;
-        if(fromId===toId) return;
-        const qs=c.questions;
-        const fi=qs.findIndex(x=>x.id===fromId);
-        const ti=qs.findIndex(x=>x.id===toId);
-        const [moved]=qs.splice(fi,1);qs.splice(ti,0,moved);
-        renderSidebar();scheduleSave();
-      });
-      item.addEventListener('click',()=>{c.activeQId=q.id;renderSidebar();renderMain();scheduleSave();});
-      list.appendChild(item);
-    });
-  }
+  // ── Sidebar (設問はツリーに統合) ──
+  function renderSidebar(){renderCompanyTree();} // 互換: 既存呼び出し用
 
   // ── Main card ──
   function renderMain(){
@@ -1182,7 +1162,7 @@
         <div class="q-meta">
           <div class="q-limit-wrap">
             <span>文字数制限</span>
-            <input type="number" class="q-limit-input" id="cardLimit" min="0" max="9999" placeholder="400">
+            <input type="number" class="q-limit-input" id="cardLimit" min="0" max="9999" step="100" placeholder="400">
             <span>字</span>
           </div>
           <span style="font-size:11px;color:var(--text3)">※ 制限なしの場合は空欄</span>
@@ -1201,13 +1181,30 @@
         <textarea class="q-textarea" id="cardText" placeholder="ここに文章を入力..."></textarea>
         <button class="btn-copy" id="btnCopy" title="コピー"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
       </div>
+      <div class="q-toolbar">
+        <div class="counter-display">
+          <span class="counter-current" id="cardCurrent">0</span>
+          <span class="counter-sep" id="cardSep"></span>
+          <span class="counter-limit" id="cardLimitDisplay"></span>
+          <span class="counter-unit">字</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;background:var(--text3)"></div></div>
+          <div class="progress-label" id="progressLabel"></div>
+        </div>
+        <div class="q-toolbar-actions">
+          <button class="btn-copy-qa" id="btnCopyQA" title="この設問と解答をコピー"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> この設問</button>
+          <button class="btn-copy-all" id="btnCopyAll" title="全設問と解答をコピー"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 全設問</button>
+          <button class="btn-done" id="btnDone" title="この草案を完了にする">✓</button>
+        </div>
+      </div>
       <div class="memo-accordion">
-        <div class="memo-toggle open" id="memoToggle">
+        <div class="memo-toggle" id="memoToggle">
           <span class="memo-toggle-icon">▶</span>
           <span class="memo-toggle-label">note</span>
           <span class="memo-toggle-preview" id="memoPreview"></span>
         </div>
-        <div class="memo-body open" id="memoBody">
+        <div class="memo-body" id="memoBody">
           <textarea class="memo-textarea" id="memoText" placeholder="作戦メモ、使うエピソード、修正点など自由に..."></textarea>
         </div>
       </div>
@@ -1228,23 +1225,7 @@
           </div>
         </div>
       </div>
-      <div class="q-footer">
-        <div class="counter-display">
-          <span class="counter-current" id="cardCurrent">0</span>
-          <span class="counter-sep" id="cardSep"></span>
-          <span class="counter-limit" id="cardLimitDisplay"></span>
-          <span class="counter-unit">字</span>
-        </div>
-        <div class="progress-wrap">
-          <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;background:var(--text3)"></div></div>
-          <div class="progress-label" id="progressLabel"></div>
-        </div>
-        <div class="footer-copy-btns">
-          <button class="btn-copy-qa" id="btnCopyQA" title="この設問と解答をコピー"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> この設問</button>
-          <button class="btn-copy-all" id="btnCopyAll" title="全設問と解答をコピー"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 全設問</button>
-        </div>
-        <button class="btn-done" id="btnDone" title="この草案を完了にする">✓</button>
-      </div>`;
+`;
 
     card.querySelector('#cardLabel').addEventListener('input',e=>{
       const q=activeQuestion();if(!q) return;
@@ -1569,8 +1550,8 @@
       // 連動：✨の結果をClaude会話にも残し、そのまま対話で続けられるようにする
       if(!target.chat) target.chat=[];
       target.chat.push({role:'assistant',content: mode==='refine'
-        ? '✨ 前の草案を添削して、この草案にしました。「もっと簡潔に」「ここを強調」など、続けて相談できます。'
-        : '✨ 素材庫をもとに下書きしました。直したい点や方向性を教えてもらえれば、続けて調整します。'});
+        ? '前の草案を添削して、この草案にしました。「もっと簡潔に」「ここを強調」など、続けて相談できます。'
+        : '素材庫をもとに下書きしました。直したい点や方向性を教えてもらえれば、続けて調整します。'});
       if(activeQuestion()===q && q.activeDraftId===target.id){
         renderChatLog(target); updateChatPreview(target);
         const cb=document.getElementById('chatBody'),ct=document.getElementById('chatToggle');
@@ -1609,6 +1590,8 @@
   const CLAWD_SVG=`<svg viewBox="0 0 12 8" width="60" height="40" shape-rendering="crispEdges" style="display:block;margin:0 auto 8px;"><rect x="2" y="0" width="8" height="1" fill="#D77655"/><rect x="2" y="1" width="1" height="1" fill="#D77655"/><rect x="3" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="4" y="1" width="4" height="1" fill="#D77655"/><rect x="8" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="9" y="1" width="1" height="1" fill="#D77655"/><rect x="0" y="2" width="12" height="1" fill="#D77655"/><rect x="0" y="3" width="12" height="1" fill="#D77655"/><rect x="2" y="4" width="8" height="1" fill="#D77655"/><rect x="2" y="5" width="8" height="1" fill="#D77655"/><rect x="2" y="6" width="1" height="1" fill="#D77655"/><rect x="4" y="6" width="1" height="1" fill="#D77655"/><rect x="7" y="6" width="1" height="1" fill="#D77655"/><rect x="9" y="6" width="1" height="1" fill="#D77655"/><rect x="2" y="7" width="1" height="1" fill="#D77655"/><rect x="4" y="7" width="1" height="1" fill="#D77655"/><rect x="7" y="7" width="1" height="1" fill="#D77655"/><rect x="9" y="7" width="1" height="1" fill="#D77655"/></svg>`;
   // ボタン用の小さいClawd（同じSVGからサイズ違いを生成）
   const CLAWD_ICON=CLAWD_SVG.replace('width="60" height="40"','width="18" height="12"').replace('display:block;margin:0 auto 8px;','display:block;');
+  // チャット発言の頭に付けるClawd（インライン）
+  const CLAWD_CHAT=CLAWD_SVG.replace('width="60" height="40"','width="16" height="11"').replace('display:block;margin:0 auto 8px;','display:inline-block;vertical-align:-2px;margin-right:6px;');
   function renderChatLog(d){
     const log=document.getElementById('chatLog');if(!log) return;
     const chat=(d&&d.chat)||[];
@@ -1616,7 +1599,7 @@
       log.innerHTML='<div class="chat-empty">'+CLAWD_SVG+'</div>';
       return;
     }
-    log.innerHTML=chat.map(m=>`<div class="chat-msg ${m.role==='user'?'user':'ai'}">${escHtml(m.content)}</div>`).join('');
+    log.innerHTML=chat.map(m=>m.role==='user'?`<div class="chat-msg user">${escHtml(m.content)}</div>`:`<div class="chat-msg ai">${CLAWD_CHAT}<span class="chat-text">${escHtml(m.content)}</span></div>`).join('');
     log.scrollTop=log.scrollHeight;
   }
   function updateChatPreview(d){
@@ -1671,7 +1654,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
           if(d.chat[aiIdx]) d.chat[aiIdx].content=full;
           if(activeQuestion()===q && activeDraftForQ(q)===d){
             const log=document.getElementById('chatLog');
-            if(log){const bs=log.querySelectorAll('.chat-msg.ai');const last=bs[bs.length-1];if(last){last.textContent=full;log.scrollTop=log.scrollHeight;}else renderChatLog(d);}
+            if(log){const bs=log.querySelectorAll('.chat-msg.ai');const last=bs[bs.length-1];if(last){const tx=last.querySelector('.chat-text');(tx||last).textContent=full;log.scrollTop=log.scrollHeight;}else renderChatLog(d);}
           }
         }
       });
@@ -1782,7 +1765,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
     const c=activeCompany();if(!c) return;
     const id=genId(),did=genId();
     if(!c.questions) c.questions=[];
-    c.questions.push({id,label:'',limit:0,activeDraftId:did,drafts:[{id:did,name:'草案1',text:'',done:false}]});
+    c.questions.push({id,label:'',limit:400,activeDraftId:did,drafts:[{id:did,name:'草案1',text:'',done:false}]});
     c.activeQId=id;render();scheduleSave();
     setTimeout(()=>{const el=document.getElementById('cardLabel');if(el) el.focus();},50);
   }
@@ -1802,7 +1785,6 @@ ${cur||'(まだ空)'}`+guidelineBlock();
   document.getElementById('addCompanyBg').addEventListener('click',e=>{if(e.target===document.getElementById('addCompanyBg')) closeAddCompanyModal();});
   document.getElementById('newName').addEventListener('keydown',e=>{if(e.key==='Enter') confirmAddCompany();});
 
-  document.getElementById('questionAdd').addEventListener('click',addQuestion);
   document.getElementById('addDraftConfirm').addEventListener('click',confirmAddDraft);
   document.getElementById('addDraftCancel').addEventListener('click',closeAddDraftModal);
   document.getElementById('addDraftClose').addEventListener('click',closeAddDraftModal);
@@ -1897,7 +1879,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
   let ivChat=[];
   function renderIvLog(){
     const log=document.getElementById('ivLog'); if(!log) return;
-    log.innerHTML=ivChat.map(m=>`<div class="chat-msg ${m.role==='user'?'user':'ai'}">${escHtml(m.content)}</div>`).join('');
+    log.innerHTML=ivChat.map(m=>m.role==='user'?`<div class="chat-msg user">${escHtml(m.content)}</div>`:`<div class="chat-msg ai">${CLAWD_CHAT}<span class="chat-text">${escHtml(m.content)}</span></div>`).join('');
     log.scrollTop=log.scrollHeight;
   }
   function openInterview(){
@@ -1928,7 +1910,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
 - 全体像が見えてきたら「だいたい揃いました。右下の『素材庫に保存』で自分史にまとめます」と促す。`+guidelineBlock();
     try{
       await callAI({system,messages:apiMsgs(ivChat.slice(0,ai)),maxTokens:1000,
-        onDelta:(_,f)=>{ if(ivChat[ai]){ivChat[ai].content=f; const log=document.getElementById('ivLog'); if(log){const bs=log.querySelectorAll('.chat-msg.ai');const last=bs[bs.length-1]; if(last){last.textContent=f;log.scrollTop=log.scrollHeight;}else renderIvLog();}} }
+        onDelta:(_,f)=>{ if(ivChat[ai]){ivChat[ai].content=f; const log=document.getElementById('ivLog'); if(log){const bs=log.querySelectorAll('.chat-msg.ai');const last=bs[bs.length-1]; if(last){const tx=last.querySelector('.chat-text');(tx||last).textContent=f;log.scrollTop=log.scrollHeight;}else renderIvLog();}} }
       });
     }catch(e){
       if(ivChat[ai]&&!ivChat[ai].content){ivChat[ai].content='（エラー: '+((e&&e.message)||e)+'）';renderIvLog();}
