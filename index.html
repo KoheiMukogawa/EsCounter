@@ -166,15 +166,15 @@
     .ctree-close:hover{color:var(--danger);}
     .ctree-co.dragging{opacity:.4;}
     .ctree-co.drag-over{border-left-color:var(--accent);background:rgba(108,143,255,.12);}
-    .ctree-qs{padding:2px 0 8px;}
-    .ctree-q{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 27px;cursor:pointer;border-left:2px solid transparent;transition:background .12s,opacity .12s;opacity:.7;}
+    .ctree-qs{padding:2px 0 2px;margin:0 0 14px 20px;border-left:1px solid var(--border);}
+    .ctree-q{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 9px;cursor:pointer;border-left:2px solid transparent;margin-left:-1px;transition:background .12s,opacity .12s;opacity:.7;}
     .ctree-q:hover{background:rgba(108,143,255,.05);opacity:1;}
     .ctree-q.active{background:rgba(108,143,255,.12);border-left-color:var(--accent);padding-top:9px;padding-bottom:9px;opacity:1;}
     .ctree-q-check{width:15px;height:15px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text3);}
     .ctree-q-check.done{border-color:var(--ok);background:var(--ok);color:#fff;}
     .ctree-q-body{flex:1;min-width:0;}
     .ctree-q-label{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
-    .ctree-q.active .ctree-q-label{color:var(--text);font-weight:600;font-size:13px;white-space:normal;overflow:visible;line-height:1.45;}
+    .ctree-q.active .ctree-q-label{color:var(--text);font-weight:600;font-size:13px;white-space:normal;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
     .ctree-q-check.done~.ctree-q-body .ctree-q-label{color:var(--ok);}
     .ctree-q-meta{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px;}
     .ctree-q-del{opacity:0;font-size:11px;color:var(--text3);cursor:pointer;flex-shrink:0;transition:opacity .15s;}
@@ -182,19 +182,17 @@
     .ctree-q-del:hover{color:var(--danger);}
     .ctree-q.dragging{opacity:.4;}
     .ctree-q.drag-over{border-top:2px solid var(--accent);}
-    .ctree-addq{padding:6px 12px 6px 27px;font-size:11px;color:var(--text3);cursor:pointer;transition:color .15s;}
-    .ctree-addq:hover{color:var(--accent);}
+    .ctree-addq{margin:4px 12px 2px 9px;padding:3px 8px;font-size:10px;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;border:1px dashed var(--border);border-radius:5px;line-height:1.4;}
+    .ctree-addq:hover{color:var(--accent);border-color:var(--accent);border-style:solid;}
 
     /* ── Company bar (サイドバー最下部・選択中企業の操作) ── */
     .company-bar{flex-shrink:0;display:flex;flex-direction:column;gap:5px;padding:8px 10px;border-top:1px solid var(--border);background:var(--sidebar-bg);}
     .cbar-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-    .cbar-chip{font-size:10px;color:var(--text3);white-space:nowrap;}
+    .cbar-chip{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);white-space:nowrap;flex-shrink:0;}
     .cbar-chip.warn{color:var(--warn);}
     .cbar-chip.danger{color:var(--danger);font-weight:600;}
-    .cbar-chip.mono{font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-    .cbar-link{font-size:10px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+    .cbar-link{font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
     .cbar-link:hover{text-decoration:underline;}
-    .cbar-hint{font-size:9px;color:var(--text3);border:1px solid var(--border);border-radius:4px;padding:0 3px;}
     .cbar-actions{display:flex;align-items:center;gap:4px;}
     .cbar-btn{flex:1;font-size:10px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .cbar-btn:hover{border-color:var(--accent);color:var(--accent);}
@@ -1079,12 +1077,13 @@
     el.style.display='flex';
     const fmtDate=dl=>{if(!dl) return null;const d=new Date(dl);return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;};
     const dl=c.deadline?deadlineState(c.deadline):null;
-    const meta=`${c.deadline?`<span class="cbar-chip${dl&&dl.cls?' '+dl.cls:''}">📅 ${fmtDate(c.deadline)}${dl&&dl.label?` ・${dl.label}`:''}</span>`:''}${c.url?`<a class="cbar-link" id="cbarUrl" href="${c.url}" target="_blank" rel="noopener">🔗 マイページ${c.loginId?'<span class="cbar-hint">📋 ID</span>':''}</a>`:''}${c.loginId?`<span class="cbar-chip mono">${c.loginId}</span>`:''}`;
+    const linkIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>';
     el.innerHTML=`
-      ${meta?`<div class="cbar-meta">${meta}</div>`:''}
+      ${c.url?`<div class="cbar-meta"><a class="cbar-link" id="cbarUrl" href="${c.url}" target="_blank" rel="noopener" title="${c.loginId?'マイページを開く（ログインIDをコピーします）':'マイページを開く'}">${linkIcon} マイページ</a></div>`:''}
       <div class="cbar-actions">
         <button class="cbar-btn icon" id="cbarEdit" title="企業情報を編集">✏</button>
-        <button class="cbar-btn ${c.submitted?'active':''}" id="cbarSubmit">${c.submitted?'提出済み ✓':'提出済みにする'}</button>
+        ${c.deadline?`<span class="cbar-chip${dl&&dl.cls?' '+dl.cls:''}">${fmtDate(c.deadline)}${dl&&dl.label?` ${dl.label}`:''}</span>`:''}
+        <button class="cbar-btn ${c.submitted?'active':''}" id="cbarSubmit" title="提出済みを切り替え">${c.submitted?'✓ 提出済み':'□ 提出済み'}</button>
       </div>
       ${c.submitted?`
       <div class="cbar-actions">
