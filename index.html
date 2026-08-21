@@ -189,7 +189,7 @@
     .task-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
     .task-check{width:15px;height:15px;flex-shrink:0;cursor:pointer;accent-color:var(--ok);}
     .task-name{flex:1;min-width:0;}
-    .task-due{width:140px;flex-shrink:0;}
+    .task-due{flex:0 0 140px;}
     .task-del{flex-shrink:0;cursor:pointer;color:var(--text3);font-size:14px;line-height:1;padding:0 4px;}
     .task-del:hover{color:var(--danger);}
     .task-add{margin-top:2px;padding:3px 8px;font-size:10px;color:var(--text3);cursor:pointer;background:transparent;border:1px dashed var(--border);border-radius:5px;font-family:inherit;}
@@ -284,7 +284,7 @@
     .btn-cancel:hover{border-color:var(--text2);color:var(--text2);}
 
     /* ── Add company modal ── */
-    #addCompanyModal{max-width:460px;}
+    #addCompanyModal{max-width:460px;max-height:85vh;overflow-y:auto;}
     .modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:14px;}
     .modal-field{display:flex;flex-direction:column;gap:5px;}
     .modal-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-weight:500;}
@@ -980,7 +980,8 @@
     });
     sorted.forEach(c=>{
       const isActive=c.id===activeCompanyId;
-      const nd=nextDue(c);
+      const dead=c.submitted&&c.result==='fail';
+      const nd=dead?null:nextDue(c);
       const row=document.createElement('div');
       // 「やることが無い」企業だけ薄くする。提出済みでも作業が残っていれば薄くしない
       row.className='ctree-co'+(isActive?' active':'')+((c.submitted&&!nd)?' submitted':'');
@@ -1793,6 +1794,12 @@ ${cur||'(まだ空)'}`+guidelineBlock();
     const url=document.getElementById('newUrl').value.trim();
     const loginId=document.getElementById('newLoginId').value.trim();
     const deadline=document.getElementById('newDeadline').value;
+    // 片方だけ埋まった行は入力データを黙って捨てないよう、空欄にフォーカスして保存を中断する
+    for(const row of document.querySelectorAll('#taskRows .task-row')){
+      const nameEl=row.querySelector('.task-name'),dueEl=row.querySelector('.task-due');
+      const n=nameEl.value.trim(),d=dueEl.value;
+      if((n&&!d)||(!n&&d)){(n?dueEl:nameEl).focus();return;}
+    }
     const tasks=collectTaskRows();
     const bg=document.getElementById('addCompanyBg');
     const editId=bg.dataset.editId;
