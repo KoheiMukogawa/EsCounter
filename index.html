@@ -166,8 +166,6 @@
     .ctree-close{opacity:0;color:var(--text3);font-size:13px;flex-shrink:0;transition:opacity .15s;}
     .ctree-co:hover .ctree-close{opacity:1;}
     .ctree-close:hover{color:var(--danger);}
-    .ctree-co.dragging{opacity:.4;}
-    .ctree-co.drag-over{border-left-color:var(--accent);background:rgba(108,143,255,.12);}
     .ctree-qs{padding:2px 0 2px;margin:0 0 14px 20px;border-left:1px solid var(--border);}
     .ctree-q{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 9px;cursor:pointer;border-left:2px solid transparent;margin-left:-1px;transition:background .12s,opacity .12s;opacity:.7;}
     .ctree-q:hover{background:rgba(108,143,255,.05);opacity:1;}
@@ -1038,20 +1036,6 @@
       closeEl.addEventListener('click',e=>{e.stopPropagation();removeCompany(c.id);});
       row.appendChild(closeEl);
 
-      row.draggable=true;row.dataset.cid=c.id;
-      row.addEventListener('dragstart',e=>{e.dataTransfer.setData('cid',c.id);row.classList.add('dragging');});
-      row.addEventListener('dragend',()=>row.classList.remove('dragging'));
-      row.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('cid')){e.preventDefault();row.classList.add('drag-over');}});
-      row.addEventListener('dragleave',()=>row.classList.remove('drag-over'));
-      row.addEventListener('drop',e=>{
-        e.preventDefault();row.classList.remove('drag-over');
-        const fromId=e.dataTransfer.getData('cid');
-        if(!fromId) return; const toId=c.id; if(fromId===toId) return;
-        const fi=companies.findIndex(x=>x.id===fromId);const ti=companies.findIndex(x=>x.id===toId);
-        if(fi<0||ti<0) return;
-        const [moved]=companies.splice(fi,1);companies.splice(ti,0,moved);
-        renderCompanyTree();scheduleSave();
-      });
       row.addEventListener('click',()=>{if(activeCompanyId!==c.id){activeCompanyId=c.id;render();scheduleSave();}});
       tree.appendChild(row);
 
