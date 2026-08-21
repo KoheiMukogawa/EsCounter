@@ -1004,17 +1004,18 @@
       nameEl.addEventListener('click',e=>{if(isActive) e.stopPropagation();});
       body.appendChild(nameEl);
 
-      // 次にやることの名前＋完了チェック（無ければ行は1行のまま）
-      if(nd){
+      // 2行目は「ウェブテスト」等の作業のときだけ出す。
+      // ES提出は行そのものが表しているので名前は出さず、残り日数バッジだけで示す
+      // （nextDue() には残すのでソートとバッジは従来どおりES提出期限で動く。提出はサイドバー下部の「提出済み」で行う）
+      if(nd&&nd.kind==='task'){
         const sub=document.createElement('div');
         sub.className='ctree-co-sub';
         const chk=document.createElement('span');
         chk.className='ctree-co-check';chk.textContent='✓';
-        chk.title=nd.kind==='es'?'ES提出を完了にする':`「${nd.name}」を完了にする`;
+        chk.title=`「${nd.name}」を完了にする`;
         chk.addEventListener('click',e=>{
           e.stopPropagation();
-          if(nd.kind==='es'){c.submitted=true;}
-          else{const t=(c.tasks||[]).find(x=>x.id===nd.id);if(t) t.done=true;}
+          const t=(c.tasks||[]).find(x=>x.id===nd.id);if(t) t.done=true;
           render();scheduleSave();
         });
         sub.appendChild(chk);
