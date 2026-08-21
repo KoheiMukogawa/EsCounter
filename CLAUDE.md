@@ -20,7 +20,7 @@ ESM（ES Manager）= 就活のエントリーシート(ES)を一元管理する�
 - **ホスティング**：GitHub Pages、`main` ブランチから配信。本番 = https://koheimukogawa.github.io/ESM/ 。
   - ⚠️ GitHub Pages（無料プラン）は **publicリポジトリ必須**。非公開化するとサイトが落ちる（Firebase Hosting に移行する場合を除く）。
 - **認証**：Firebase Auth（Googleログイン）。Firebaseプロジェクト = `escounter-d9db7`。
-- **DB**：Firestore。データモデルは `users/{uid}` の **1ドキュメント**（companies→questions→drafts／companies→tasks＝期限つき作業 `{id,name,due,done}`／materials＝素材庫: 自分史・ガクチカ・自己PR・志望動機の軸・その他）。草案 draft＝`{id,name,text,done,memo,chat[]}`（`chat` はAI相談の会話履歴 `{role,content}`）。ローカルに5世代バックアップ。
+- **DB**：Firestore。データモデルは `users/{uid}` の **1ドキュメント**（companies→questions→drafts／companies→tasks＝期限つき作業 `{id,name,due,done}`／`c.collapsed`＝設問ツリーの開閉状態／materials＝素材庫: 自分史・ガクチカ・自己PR・志望動機の軸・その他）。草案 draft＝`{id,name,text,done,memo,chat[]}`（`chat` はAI相談の会話履歴 `{role,content}`）。ローカルに5世代バックアップ。
 - **AIバックエンド**：Cloud Functions for Firebase（2nd gen / Node20）。関数 `ai`（asia-northeast1）が「Firebase IDトークン検証 → Claude API へ SSE ストリーミング中継」する**薄いプロキシ**。ソースは `functions/`。
   - URL: `https://asia-northeast1-escounter-d9db7.cloudfunctions.net/ai`（`index.html` の `AI_ENDPOINT` と一致）。
   - フロントの共通入口は `index.html` の `callAI({system, messages, maxTokens, onDelta})`。**全AI機能はここを通す。**

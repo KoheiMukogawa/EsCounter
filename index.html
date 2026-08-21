@@ -151,11 +151,12 @@
     .ctree-caret.open{transform:rotate(90deg);}
     .ctree-co-body{flex:1;min-width:0;display:flex;flex-direction:column;}
     .ctree-co-name{min-width:0;font-size:13px;font-weight:600;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;outline:none;background:transparent;border:none;font-family:inherit;}
-    .ctree-co-sub{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ctree-co-sub{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px;white-space:nowrap;overflow:hidden;}
     .ctree-co.active .ctree-co-name{color:var(--text);cursor:text;font-size:15px;font-weight:700;letter-spacing:.01em;}
     .ctree-co.submitted .ctree-co-name{color:var(--text3);}
-    .ctree-prog{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);flex-shrink:0;}
-    .ctree-prog.all{color:var(--ok);}
+    .ctree-co-check{width:13px;height:13px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:transparent;transition:border-color .15s,color .15s;}
+    .ctree-co-check:hover{border-color:var(--ok);color:var(--ok);}
+    .ctree-co-subname{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .ctree-badge{font-size:10px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:10px;border:1px solid var(--border);color:var(--text3);flex-shrink:0;white-space:nowrap;}
     .ctree-badge.dl.warn{color:var(--warn);border-color:var(--warn);background:rgba(251,191,36,.08);}
     .ctree-badge.dl.danger{color:var(--danger);border-color:var(--danger);background:rgba(248,113,113,.08);}
@@ -952,8 +953,8 @@
   // ES提出期限はデータを作らず、ここで仮想の1件として合成する
   function nextDue(c){
     const items=[];
-    if(c.deadline&&!c.submitted) items.push({name:'ES提出',due:c.deadline});
-    (c.tasks||[]).forEach(t=>{if(!t.done&&t.due) items.push({name:t.name,due:t.due});});
+    if(c.deadline&&!c.submitted) items.push({name:'ES提出',due:c.deadline,kind:'es'});
+    (c.tasks||[]).forEach(t=>{if(!t.done&&t.due) items.push({name:t.name,due:t.due,kind:'task',id:t.id});});
     if(!items.length) return null;
     items.sort((a,b)=>a.due<b.due?-1:a.due>b.due?1:0);
     return items[0];
@@ -987,7 +988,7 @@
       row.className='ctree-co'+(isActive?' active':'')+((c.submitted&&!nd)?' submitted':'');
 
       const caret=document.createElement('span');
-      caret.className='ctree-caret'+(isActive?' open':'');caret.textContent='▶';
+      caret.className='ctree-caret'+((isActive&&!c.collapsed)?' open':'');caret.textContent='▶';
       row.appendChild(caret);
 
       const body=document.createElement('div');
@@ -1002,10 +1003,23 @@
       nameEl.addEventListener('click',e=>{if(isActive) e.stopPropagation();});
       body.appendChild(nameEl);
 
-      // 次にやることの名前（無ければ行は1行のまま）
+      // 次にやることの名前＋完了チェック（無ければ行は1行のまま）
       if(nd){
-        const sub=document.createElement('span');
-        sub.className='ctree-co-sub';sub.textContent=nd.name;
+        const sub=document.createElement('div');
+        sub.className='ctree-co-sub';
+        const chk=document.createElement('span');
+        chk.className='ctree-co-check';chk.textContent='✓';
+        chk.title=nd.kind==='es'?'ES提出を完了にする':`「${nd.name}」を完了にする`;
+        chk.addEventListener('click',e=>{
+          e.stopPropagation();
+          if(nd.kind==='es'){c.submitted=true;}
+          else{const t=(c.tasks||[]).find(x=>x.id===nd.id);if(t) t.done=true;}
+          render();scheduleSave();
+        });
+        sub.appendChild(chk);
+        const subName=document.createElement('span');
+        subName.className='ctree-co-subname';subName.textContent=nd.name;
+        sub.appendChild(subName);
         body.appendChild(sub);
       }
       row.appendChild(body);
@@ -1023,25 +1037,22 @@
       } else if(c.submitted){
         const db=document.createElement('span');db.className='ctree-badge submitted';db.textContent='提出済';row.appendChild(db);
       }
-      // 達成度 n/m
-      const qs=c.questions||[];
-      if(qs.length){
-        const doneCount=qs.filter(q=>(q.drafts||[]).some(d=>d.done)).length;
-        const prog=document.createElement('span');
-        prog.className='ctree-prog'+(doneCount===qs.length?' all':'');prog.textContent=`${doneCount}/${qs.length}`;
-        row.appendChild(prog);
-      }
+      const qs=c.questions||[];  // ↓の設問展開で使う
 
       const closeEl=document.createElement('span');
       closeEl.className='ctree-close';closeEl.textContent='×';
       closeEl.addEventListener('click',e=>{e.stopPropagation();removeCompany(c.id);});
       row.appendChild(closeEl);
 
-      row.addEventListener('click',()=>{if(activeCompanyId!==c.id){activeCompanyId=c.id;render();scheduleSave();}});
+      // 未選択なら選択する。選択中の企業をもう一度押したら設問を開閉する
+      row.addEventListener('click',()=>{
+        if(activeCompanyId!==c.id){activeCompanyId=c.id;render();scheduleSave();}
+        else{c.collapsed=!c.collapsed;renderCompanyTree();scheduleSave();}
+      });
       tree.appendChild(row);
 
-      // アクティブ企業の設問を展開
-      if(isActive){
+      // アクティブ企業の設問を展開（閉じていれば出さない）
+      if(isActive&&!c.collapsed){
         const qwrap=document.createElement('div');qwrap.className='ctree-qs';
         qs.forEach((q,i)=>qwrap.appendChild(buildQItem(c,q,i)));
         const add=document.createElement('div');add.className='ctree-addq';add.textContent='＋ 設問を追加';
