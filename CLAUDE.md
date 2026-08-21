@@ -20,7 +20,7 @@ ESM（ES Manager）= 就活のエントリーシート(ES)を一元管理する�
 - **ホスティング**：GitHub Pages、`main` ブランチから配信。本番 = https://koheimukogawa.github.io/ESM/ 。
   - ⚠️ GitHub Pages（無料プラン）は **publicリポジトリ必須**。非公開化するとサイトが落ちる（Firebase Hosting に移行する場合を除く）。
 - **認証**：Firebase Auth（Googleログイン）。Firebaseプロジェクト = `escounter-d9db7`。
-- **DB**：Firestore。データモデルは `users/{uid}` の **1ドキュメント**（companies→questions→drafts／materials＝素材庫: 自分史・ガクチカ・自己PR・志望動機の軸・その他）。草案 draft＝`{id,name,text,done,memo,chat[]}`（`chat` はAI相談の会話履歴 `{role,content}`）。ローカルに5世代バックアップ。
+- **DB**：Firestore。データモデルは `users/{uid}` の **1ドキュメント**（companies→questions→drafts／companies→tasks＝期限つき作業 `{id,name,due,done}`／materials＝素材庫: 自分史・ガクチカ・自己PR・志望動機の軸・その他）。草案 draft＝`{id,name,text,done,memo,chat[]}`（`chat` はAI相談の会話履歴 `{role,content}`）。ローカルに5世代バックアップ。
 - **AIバックエンド**：Cloud Functions for Firebase（2nd gen / Node20）。関数 `ai`（asia-northeast1）が「Firebase IDトークン検証 → Claude API へ SSE ストリーミング中継」する**薄いプロキシ**。ソースは `functions/`。
   - URL: `https://asia-northeast1-escounter-d9db7.cloudfunctions.net/ai`（`index.html` の `AI_ENDPOINT` と一致）。
   - フロントの共通入口は `index.html` の `callAI({system, messages, maxTokens, onDelta})`。**全AI機能はここを通す。**
@@ -53,6 +53,7 @@ ESM（ES Manager）= 就活のエントリーシート(ES)を一元管理する�
 - **(a)「Claudeに教える」育てるガイドライン = ✅ 完了**（2026-06-21）。`guidelines`(Firestore) を全AI機能の system に `guidelineBlock()` で注入。あわせて 添削の変更点メモ／Claudeブランディング・文言最小化／Clawd マスコット（3mf解析で12×8ドット再現）／使用量チップ（`aiUsage`）も追加。
 - **Phase 2 ②（切り口提案・軽量版）= ✅**（2026-06-21）：「切り口」ボタン→Claudeが書く方向性を3つチャット提案→会話で育てる（"3案フル生成"は廃止＝草案を散らかさない）。あわせて：ヘッダをアカウント(アバター)メニューに集約（📚素材庫/📝Claudeへの指示/使い方）／ガイドを「📝 Claudeへの指示」に簡素化／複製ボタン廃止。
 - **自分史インタビュー（最小版）= ✅**（2026-06-22）：素材庫の「💬 対話で自分史を作る」→Claudeが問答で引き出し→「素材庫に保存」で `materials` に {cat:'自分史'} を生成（`ivChat` で会話保持・接地）。素材庫が空のとき初回誘導（強制しない）。王道「①素材を貯める」をAIが支援。
+- **期限つき作業＋選考順ソート = ✅**（2026-08-21）：企業に `tasks[]`（期限つき作業）を追加し、企業ツリーを `nextDue()` 由来の「次にやることが近い順」に並べ替え。ES提出済みでも未完了作業があれば沈まない。面接など固定日時・通知・カレンダービューは非目標（spec 参照）。
 - **次の候補**：(c) Phase 3 ④企業提案（Web検索で根拠付け・"参考提案"に留める。LLM記憶だけの断定は知識カットオフ＆ハルシネーションで危険）／自分史インタビューの「ガクチカ版」。
 - 詳細な作業履歴は `PROGRESS.md`。
 
