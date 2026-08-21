@@ -151,11 +151,12 @@
     .ctree-caret.open{transform:rotate(90deg);}
     .ctree-co-body{flex:1;min-width:0;display:flex;flex-direction:column;}
     .ctree-co-name{min-width:0;font-size:13px;font-weight:600;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;outline:none;background:transparent;border:none;font-family:inherit;}
-    .ctree-co-sub{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px;white-space:nowrap;overflow:hidden;}
+    .ctree-co-sub{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text);font-family:'DM Mono',monospace;margin-top:3px;white-space:nowrap;overflow:hidden;}
     .ctree-co.active .ctree-co-name{color:var(--text);cursor:text;font-size:15px;font-weight:700;letter-spacing:.01em;}
     .ctree-co.submitted .ctree-co-name{color:var(--text3);}
-    .ctree-co-check{width:13px;height:13px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:transparent;transition:border-color .15s,color .15s;}
-    .ctree-co-check:hover{border-color:var(--ok);color:var(--ok);}
+    .ctree-co-check{width:15px;height:15px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--text);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text2);transition:border-color .15s,color .15s,background .15s;}
+    .ctree-co-check:hover{border-color:var(--ok);background:var(--ok);color:#fff;}
+    .ctree-co-check:active{transform:scale(.9);}
     .ctree-co-subname{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .ctree-badge{font-size:10px;font-family:'DM Mono',monospace;padding:1px 6px;border-radius:10px;border:1px solid var(--border);color:var(--text3);flex-shrink:0;white-space:nowrap;}
     .ctree-badge.dl.warn{color:var(--warn);border-color:var(--warn);background:rgba(251,191,36,.08);}
