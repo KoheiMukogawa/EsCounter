@@ -948,21 +948,34 @@
   }
 
   // ── Company tree (企業＝設問の折りたたみツリー) ──
+  // その企業の「次にやること」＝未完了で最も期限が近い1件。無ければ null
+  // ES提出期限はデータを作らず、ここで仮想の1件として合成する
+  function nextDue(c){
+    const items=[];
+    if(c.deadline&&!c.submitted) items.push({name:'ES提出',due:c.deadline});
+    (c.tasks||[]).forEach(t=>{if(!t.done&&t.due) items.push({name:t.name,due:t.due});});
+    if(!items.length) return null;
+    items.sort((a,b)=>a.due<b.due?-1:a.due>b.due?1:0);
+    return items[0];
+  }
   function renderCompanyTabs(){renderCompanyTree();} // 互換: 既存呼び出し用
   function renderCompanyTree(){
     const tree=document.getElementById('companyTree');
     if(!tree) return;
     tree.innerHTML='';
-    // sort: normal → pass/pending/submitted → fail/expired
-    const today=new Date(); today.setHours(0,0,0,0);
+    // sort: 次にやることがある(期限が近い順) → やることなし(結果待ち等) → 落選
     const sortRank=c=>{
       if(c.submitted&&c.result==='fail') return 2;
-      if(c.submitted||!!(c.deadline&&new Date(c.deadline)<today)) return 1;
-      return 0;
+      if(nextDue(c)) return 0;
+      return 1;
     };
     const sorted=[...companies].sort((a,b)=>{
-      const diff=sortRank(a)-sortRank(b);
-      if(diff!==0) return diff;
+      const ra=sortRank(a),rb=sortRank(b);
+      if(ra!==rb) return ra-rb;
+      if(ra===0){
+        const da=nextDue(a).due,db=nextDue(b).due;
+        if(da!==db) return da<db?-1:1;
+      }
       return companies.indexOf(a)-companies.indexOf(b);
     });
     sorted.forEach(c=>{
