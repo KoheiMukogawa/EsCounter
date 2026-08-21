@@ -149,7 +149,9 @@
     .ctree-co.active{border-left-color:var(--accent);background:rgba(108,143,255,.1);padding:11px 12px;opacity:1;}
     .ctree-caret{font-size:9px;color:var(--text3);transition:transform .15s;flex-shrink:0;width:9px;text-align:center;}
     .ctree-caret.open{transform:rotate(90deg);}
-    .ctree-co-name{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;outline:none;background:transparent;border:none;font-family:inherit;}
+    .ctree-co-body{flex:1;min-width:0;display:flex;flex-direction:column;}
+    .ctree-co-name{min-width:0;font-size:13px;font-weight:600;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;outline:none;background:transparent;border:none;font-family:inherit;}
+    .ctree-co-sub{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .ctree-co.active .ctree-co-name{color:var(--text);cursor:text;font-size:15px;font-weight:700;letter-spacing:.01em;}
     .ctree-co.submitted .ctree-co-name{color:var(--text3);}
     .ctree-prog{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);flex-shrink:0;}
@@ -980,12 +982,17 @@
     });
     sorted.forEach(c=>{
       const isActive=c.id===activeCompanyId;
+      const nd=nextDue(c);
       const row=document.createElement('div');
-      row.className='ctree-co'+(isActive?' active':'')+(c.submitted?' submitted':'');
+      // 「やることが無い」企業だけ薄くする。提出済みでも作業が残っていれば薄くしない
+      row.className='ctree-co'+(isActive?' active':'')+((c.submitted&&!nd)?' submitted':'');
 
       const caret=document.createElement('span');
       caret.className='ctree-caret'+(isActive?' open':'');caret.textContent='▶';
       row.appendChild(caret);
+
+      const body=document.createElement('div');
+      body.className='ctree-co-body';
 
       const nameEl=document.createElement('span');
       nameEl.className='ctree-co-name';
@@ -994,18 +1001,28 @@
       nameEl.addEventListener('input',()=>{c.name=nameEl.textContent.trim();renderTitle();scheduleSave();});
       nameEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();nameEl.blur();}});
       nameEl.addEventListener('click',e=>{if(isActive) e.stopPropagation();});
-      row.appendChild(nameEl);
+      body.appendChild(nameEl);
 
-      // ステータス: 結果/提出 → 締切 のいずれか1つ
-      if(c.submitted&&c.result){
-        const resultMap={pass:{label:'通過',cls:'pass'},pending:{label:'結果待',cls:'pending'},fail:{label:'落選',cls:'fail'}};
+      // 次にやることの名前（無ければ行は1行のまま）
+      if(nd){
+        const sub=document.createElement('span');
+        sub.className='ctree-co-sub';sub.textContent=nd.name;
+        body.appendChild(sub);
+      }
+      row.appendChild(body);
+
+      // ステータス: 落選 → 次にやることの残り日数 → 結果 → 提出済 のいずれか1つ
+      if(c.submitted&&c.result==='fail'){
+        const rb=document.createElement('span');rb.className='ctree-badge fail';rb.textContent='落選';row.appendChild(rb);
+      } else if(nd){
+        const dl=deadlineState(nd.due);
+        if(dl.label){const badge=document.createElement('span');badge.className='ctree-badge dl '+dl.cls;badge.textContent=dl.label;row.appendChild(badge);}
+      } else if(c.submitted&&c.result){
+        const resultMap={pass:{label:'通過',cls:'pass'},pending:{label:'結果待',cls:'pending'}};
         const r=resultMap[c.result];
-        const rb=document.createElement('span');rb.className='ctree-badge '+r.cls;rb.textContent=r.label;row.appendChild(rb);
+        if(r){const rb=document.createElement('span');rb.className='ctree-badge '+r.cls;rb.textContent=r.label;row.appendChild(rb);}
       } else if(c.submitted){
         const db=document.createElement('span');db.className='ctree-badge submitted';db.textContent='提出済';row.appendChild(db);
-      } else if(c.deadline){
-        const dl=deadlineState(c.deadline);
-        if(dl.label){const badge=document.createElement('span');badge.className='ctree-badge dl '+dl.cls;badge.textContent=dl.label;row.appendChild(badge);}
       }
       // 達成度 n/m
       const qs=c.questions||[];
