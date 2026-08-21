@@ -1713,11 +1713,15 @@ ${cur||'(まだ空)'}`+guidelineBlock();
 
   // ── Company / Question actions ──
   function openAddCompanyModal(){
+    const bg=document.getElementById('addCompanyBg');
+    delete bg.dataset.editId;
     document.getElementById('newName').value='';
     document.getElementById('newUrl').value='';
     document.getElementById('newLoginId').value='';
     document.getElementById('newDeadline').value='';
-    document.getElementById('addCompanyBg').classList.add('open');
+    document.getElementById('addCompanyModal').querySelector('h2').textContent='🏢 企業を追加';
+    document.getElementById('addCompanyConfirm').textContent='追加する';
+    bg.classList.add('open');
     setTimeout(()=>document.getElementById('newName').focus(),50);
   }
   function confirmAddCompany(){
