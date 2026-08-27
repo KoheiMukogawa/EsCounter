@@ -136,6 +136,11 @@
     .sidebar-header{padding:10px 14px 8px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
     .sidebar-add{font-size:16px;cursor:pointer;color:var(--text3);transition:color .15s;line-height:1;}
     .sidebar-add:hover{color:var(--accent);}
+    /* 年度タブ（27卒/28卒）。年度を使っていないときは「企業」ラベルのまま */
+    .year-tabs{display:flex;gap:4px;align-items:center;}
+    .year-tab{padding:2px 7px;border-radius:99px;font-size:10px;letter-spacing:.05em;color:var(--text2);cursor:pointer;transition:background .12s,color .12s;}
+    .year-tab:hover{color:var(--text);}
+    .year-tab.active{background:rgba(108,143,255,.15);color:var(--accent);}
     /* drag handles */
     .draft-pill.dragging{opacity:.4;}
     .draft-pill.drag-over{border-left:2px solid var(--accent);}
@@ -493,7 +498,7 @@
   <div class="app-body">
     <div class="sidebar">
       <div class="sidebar-header">
-        <span>企業</span>
+        <span class="year-tabs" id="yearTabs"><span>企業</span></span>
         <span class="sidebar-add" id="companyAdd" title="企業を追加">＋</span>
       </div>
       <div class="company-tree" id="companyTree"></div>
@@ -531,6 +536,14 @@
       <div class="modal-field">
         <label class="modal-label">提出期限</label>
         <input class="modal-input" id="newDeadline" type="date" style="max-width:180px;">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">年度</label>
+        <select class="modal-input" id="newYear" style="max-width:180px;">
+          <option value="">指定なし</option>
+          <option value="27">27卒</option>
+          <option value="28">28卒</option>
+        </select>
       </div>
       <div class="modal-field">
         <label class="modal-label">期限つき作業</label>
@@ -718,7 +731,7 @@
   });
   const auth=firebase.auth(), db=firebase.firestore();
 
-  let companies=[], activeCompanyId=null;
+  let companies=[], activeCompanyId=null, activeYear=null;
   let materials=[];
   let guidelines='';
   let aiUsage={inputTokens:0,outputTokens:0,calls:0};
@@ -771,7 +784,9 @@
     if(!currentUser) return;
     saveTimer=null;
     try{
-      await db.collection('users').doc(currentUser.uid).set({companies,activeCompanyId,theme,materials,guidelines,aiUsage,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+      const payload={companies,activeCompanyId,theme,materials,guidelines,aiUsage,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+      if(activeYear) payload.activeYear=activeYear;
+      await db.collection('users').doc(currentUser.uid).set(payload);
       setSyncStatus('synced');
       saveLocalBackup();
     }catch(e){console.error(e);setSyncStatus(null);}
@@ -782,7 +797,7 @@
     if(!currentUser) return;
     try{
       const key='esmBackups_'+currentUser.uid;
-      const entry={savedAt:Date.now(),companies:JSON.parse(JSON.stringify(companies)),activeCompanyId,theme,materials:JSON.parse(JSON.stringify(materials)),guidelines,aiUsage};
+      const entry={savedAt:Date.now(),companies:JSON.parse(JSON.stringify(companies)),activeCompanyId,activeYear,theme,materials:JSON.parse(JSON.stringify(materials)),guidelines,aiUsage};
       let backups=[];
       try{backups=JSON.parse(localStorage.getItem(key)||'[]');}catch(e){}
       backups.unshift(entry);
@@ -807,7 +822,7 @@
     banner.style.display='flex';
     document.getElementById('btnRestoreConfirm').onclick=()=>{
       const b=getLocalBackups()[0];
-      companies=b.companies; activeCompanyId=b.activeCompanyId; theme=b.theme||theme; materials=b.materials||[]; guidelines=b.guidelines||''; aiUsage=b.aiUsage||{inputTokens:0,outputTokens:0,calls:0};
+      companies=b.companies; activeCompanyId=b.activeCompanyId; activeYear=b.activeYear||null; theme=b.theme||theme; materials=b.materials||[]; guidelines=b.guidelines||''; aiUsage=b.aiUsage||{inputTokens:0,outputTokens:0,calls:0};
       applyTheme(theme);
       render();
       scheduleSave();
@@ -823,7 +838,7 @@
       dataLoaded=true;
       if(doc.exists){
         const d=doc.data();
-        companies=d.companies||[]; activeCompanyId=d.activeCompanyId||null; theme=d.theme||'dark'; materials=d.materials||[]; guidelines=d.guidelines||''; aiUsage=d.aiUsage||{inputTokens:0,outputTokens:0,calls:0};
+        companies=d.companies||[]; activeCompanyId=d.activeCompanyId||null; activeYear=d.activeYear||null; theme=d.theme||'dark'; materials=d.materials||[]; guidelines=d.guidelines||''; aiUsage=d.aiUsage||{inputTokens:0,outputTokens:0,calls:0};
         companies.forEach(c=>(c.questions||[]).forEach(q=>{
           if(!q.drafts){q.drafts=[{id:genId(),name:'草案1',text:q.text||''}];q.activeDraftId=q.drafts[0].id;delete q.text;}
           q.drafts.forEach(d=>{if(d.done===undefined) d.done=false;});
@@ -864,7 +879,7 @@
       render();
       if(companies.length===0) offerLocalStorageRestore();
     } else {
-      currentUser=null; companies=[]; activeCompanyId=null; dataLoaded=false;
+      currentUser=null; companies=[]; activeCompanyId=null; activeYear=null; dataLoaded=false;
       document.getElementById('userMenu').style.display='none';
       document.getElementById('loginScreen').style.display='flex';
       document.getElementById('appScreen').style.display='none';
@@ -916,6 +931,7 @@
           if(text) snip.innerHTML=highlight(snippet(text,kw),kw);
           item.appendChild(comp);item.appendChild(lbl);item.appendChild(snip);
           item.addEventListener('click',()=>{
+            if(yearTabsOn()) activeYear=coYear(c);
             activeCompanyId=c.id;c.activeQId=q.id;
             results.classList.remove('open');input.value='';
             render();
@@ -930,8 +946,47 @@
     document.addEventListener('click',e=>{if(!document.getElementById('searchWrap').contains(e.target)) results.classList.remove('open');});
   })();
 
+  // ── 年度（27卒/28卒）──
+  // 使う人だけの機能。1社も年度を持たなければタブは出ず、c.year も activeYear も保存されない。
+  // 年度を2つとも使い始めたときだけタブが現れ、年度未設定の企業は先頭の年度（=27卒）に属するものとして扱う
+  // （データは書き換えないので、どのタブにも出ない企業は生まれない）
+  const YEARS=[27,28];
+  function usedYears(){return YEARS.filter(y=>companies.some(c=>c.year===y));}
+  function yearTabsOn(){return usedYears().length>=2;}
+  function coYear(c){return c.year||usedYears()[0];}
+  function visibleCompanies(){return yearTabsOn()?companies.filter(c=>coYear(c)===activeYear):companies;}
+  function normalizeYear(){
+    if(!yearTabsOn()){activeYear=null;return;}
+    const ys=usedYears();
+    if(!ys.includes(activeYear)) activeYear=ys[0];
+    const cur=companies.find(c=>c.id===activeCompanyId);
+    if(cur&&coYear(cur)!==activeYear){const f=visibleCompanies()[0];activeCompanyId=f?f.id:null;}
+  }
+  function renderYearTabs(){
+    const wrap=document.getElementById('yearTabs');
+    if(!wrap) return;
+    wrap.innerHTML='';
+    if(!yearTabsOn()){
+      const t=document.createElement('span');t.textContent='企業';wrap.appendChild(t);
+      return;
+    }
+    usedYears().forEach(y=>{
+      const b=document.createElement('span');
+      b.className='year-tab'+(y===activeYear?' active':'');
+      b.textContent=y+'卒';
+      b.addEventListener('click',()=>{
+        if(activeYear===y) return;
+        activeYear=y;
+        const f=visibleCompanies()[0];
+        activeCompanyId=f?f.id:null;
+        render();scheduleSave();
+      });
+      wrap.appendChild(b);
+    });
+  }
+
   // ── Render ──
-  function render(){renderCompanyTree();renderCompanyBar();renderMain();renderTitle();renderUsage();}
+  function render(){normalizeYear();renderYearTabs();renderCompanyTree();renderCompanyBar();renderMain();renderTitle();renderUsage();}
 
   function renderTitle(){
     document.title='ES Manager';
@@ -971,7 +1026,7 @@
       if(nextDue(c)) return 0;
       return 1;
     };
-    const sorted=[...companies].sort((a,b)=>{
+    const sorted=[...visibleCompanies()].sort((a,b)=>{
       const ra=sortRank(a),rb=sortRank(b);
       if(ra!==rb) return ra-rb;
       if(ra===0){
@@ -1192,6 +1247,7 @@
     document.getElementById('newUrl').value=c.url||'';
     document.getElementById('newLoginId').value=c.loginId||'';
     document.getElementById('newDeadline').value=c.deadline||'';
+    document.getElementById('newYear').value=c.year||'';
     renderTaskRows(c.tasks);
     document.getElementById('addCompanyModal').querySelector('h2').textContent='✏ 企業情報を編集';
     document.getElementById('addCompanyConfirm').textContent='保存する';
@@ -1795,6 +1851,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
     document.getElementById('newUrl').value='';
     document.getElementById('newLoginId').value='';
     document.getElementById('newDeadline').value='';
+    document.getElementById('newYear').value=activeYear||'';
     renderTaskRows([]);
     document.getElementById('addCompanyModal').querySelector('h2').textContent='🏢 企業を追加';
     document.getElementById('addCompanyConfirm').textContent='追加する';
@@ -1807,6 +1864,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
     const url=document.getElementById('newUrl').value.trim();
     const loginId=document.getElementById('newLoginId').value.trim();
     const deadline=document.getElementById('newDeadline').value;
+    const year=Number(document.getElementById('newYear').value)||null;
     // 片方だけ埋まった行は入力データを黙って捨てないよう、空欄にフォーカスして保存を中断する
     for(const row of document.querySelectorAll('#taskRows .task-row')){
       const nameEl=row.querySelector('.task-name'),dueEl=row.querySelector('.task-due');
@@ -1818,12 +1876,15 @@ ${cur||'(まだ空)'}`+guidelineBlock();
     const editId=bg.dataset.editId;
     if(editId){
       const c=companies.find(x=>x.id===editId);
-      if(c){c.name=name;c.url=url;c.loginId=loginId;c.deadline=deadline;c.tasks=tasks;}
+      if(c){c.name=name;c.url=url;c.loginId=loginId;c.deadline=deadline;c.tasks=tasks;if(year) c.year=year; else delete c.year;}
       delete bg.dataset.editId;
     } else {
       const id=genId();
-      companies.push({id,name,url,loginId,deadline,tasks,submitted:false,result:null,questions:[],activeQId:null});
+      const co={id,name,url,loginId,deadline,tasks,submitted:false,result:null,questions:[],activeQId:null};
+      if(year) co.year=year;
+      companies.push(co);
       activeCompanyId=id;
+      if(year) activeYear=year;
     }
     // reset modal title
     document.getElementById('addCompanyModal').querySelector('h2').textContent='🏢 企業を追加';
