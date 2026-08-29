@@ -12,9 +12,6 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:5500",
 ]);
 
-// 許可するユーザーのUID。FirebaseコンソールのAuthenticationで確認して記入する。
-// 空のままだと「ログイン済みなら誰でも」になる（＝あなたの課金で誰でも使える）点に注意。
-// 当面はあなたと弟の2人だけにするのを推奨。
 const ALLOWED_UIDS = new Set([
   "CmD0WoOVEtO4T9Cvf8S4ZljsQbg2", // 私（あなた）
   "Iy4BLVWruegHKQe8DhxO8nHGeYC3", // 弟
