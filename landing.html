@@ -151,7 +151,7 @@
       position: sticky;
       top: 50%;
       transform: translateY(-50%);
-      align-self: starEt;
+      align-self: start;
       height: fit-content;
       padding: 80px 0;
     }
@@ -236,6 +236,29 @@
       border-top: 1px solid var(--border);
     }
 
+    /* ── Coming soon ── */
+    .soon { padding: 120px 56px; display: flex; justify-content: center; }
+    .soon-inner {
+      max-width: 620px; text-align: center;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 22px; padding: 56px 44px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.04);
+    }
+    .soon-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--text3); letter-spacing: .22em; text-transform: uppercase;
+      display: block; margin-bottom: 26px;
+    }
+    .soon-mascot { line-height: 0; margin-bottom: 22px; }
+    .soon-h2 {
+      font-size: clamp(26px, 3.4vw, 38px); font-weight: 900;
+      line-height: 1.25; letter-spacing: -.03em; margin-bottom: 18px;
+    }
+    .soon-desc {
+      font-size: 13px; color: var(--text2); line-height: 2;
+      margin-bottom: 22px;
+    }
+
     /* ── CTA ── */
     .cta {
       text-align: center; padding: 160px 56px;
@@ -277,6 +300,8 @@
       .sticky-section { grid-template-columns: 1fr; gap: 0; padding: 0 24px; }
       .sticky-left { position: relative; top: auto; transform: none; padding: 60px 0 32px; }
       .sticky-right { padding: 0 0 80px; }
+      .soon { padding: 80px 24px; }
+      .soon-inner { padding: 44px 26px; }
       .cta { padding: 100px 24px; }
       footer { padding: 40px 24px; }
       .section-divider { padding: 0 24px; }
@@ -367,6 +392,22 @@
       <p class="card-body">添削コメント・面接で突っ込まれそうな点を草案ごとに記録。執筆の邪魔にならないアコーディオン式で折りたためます。</p>
     </div>
 
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📚</div>
+        <div class="card-title">素材庫に、自分の材料をためる</div>
+      </div>
+      <p class="card-body">自分史・ガクチカ・自己PR・志望動機の軸を1か所に。企業ごとにゼロから書き直すのではなく、ためた材料から組み立てられます。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⏰</div>
+        <div class="card-title">期限つき作業と、締切が近い順の並び替え</div>
+      </div>
+      <p class="card-body">ES提出だけでなく、ウェブテストや適性検査といった作業にも期限を設定。企業一覧は「次にやることが近い順」に自動で並ぶので、うっかり忘れを防げます。</p>
+    </div>
+
   </div>
 </div>
 
@@ -407,6 +448,19 @@
 
 
 
+  </div>
+</div>
+
+<!-- Coming soon: AI（クローズドテスト中） -->
+<div class="section-divider"></div>
+
+<div class="soon">
+  <div class="soon-inner">
+    <span class="soon-label">Coming soon</span>
+    <div class="soon-mascot"><svg viewBox="0 0 12 8" width="44" height="30" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="8" height="1" fill="#D77655"/><rect x="2" y="1" width="1" height="1" fill="#D77655"/><rect x="3" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="4" y="1" width="4" height="1" fill="#D77655"/><rect x="8" y="1" width="1" height="1" fill="#1A1A1A"/><rect x="9" y="1" width="1" height="1" fill="#D77655"/><rect x="0" y="2" width="12" height="1" fill="#D77655"/><rect x="0" y="3" width="12" height="1" fill="#D77655"/><rect x="2" y="4" width="8" height="1" fill="#D77655"/><rect x="2" y="5" width="8" height="1" fill="#D77655"/><rect x="2" y="6" width="1" height="1" fill="#D77655"/><rect x="4" y="6" width="1" height="1" fill="#D77655"/><rect x="7" y="6" width="1" height="1" fill="#D77655"/><rect x="9" y="6" width="1" height="1" fill="#D77655"/><rect x="2" y="7" width="1" height="1" fill="#D77655"/><rect x="4" y="7" width="1" height="1" fill="#D77655"/><rect x="7" y="7" width="1" height="1" fill="#D77655"/><rect x="9" y="7" width="1" height="1" fill="#D77655"/></svg></div>
+    <h2 class="soon-h2">ESづくりに、<br><span style="color:var(--blue)">Claude</span>が寄り添う</h2>
+    <p class="soon-desc">素材庫をもとにした下書きと添削、書く切り口の提案、対話で自分史を引き出す機能——ESづくりをAIが手伝う仕組みを開発中です。既存の草案編集の流れに溶け込む形で、画面を散らかさずに作っています。</p>
+    <span class="card-tag">開発中・クローズドテスト</span>
   </div>
 </div>
 
