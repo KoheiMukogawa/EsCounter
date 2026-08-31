@@ -8,5 +8,8 @@
       ".runtimeconfig.json",
       "firebase-debug.log"
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }
