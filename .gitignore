@@ -14,3 +14,11 @@ ui-debug.log
 
 # OS
 .DS_Store
+
+# 個人情報（Firebase のユーザーUID・ログイン日）
+ESM_ID.txt
+
+# ローカル設定・作業用ファイル
+.claude/
+*.3mf
+*:Zone.Identifier
