@@ -12,10 +12,10 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:5500",
 ]);
 
-const ALLOWED_UIDS = new Set([
-  "CmD0WoOVEtO4T9Cvf8S4ZljsQbg2", // 私（あなた）
-  "Iy4BLVWruegHKQe8DhxO8nHGeYC3", // 弟
-]);
+// 許可UIDリストは Secret Manager の ALLOWED_UIDS に「カンマ区切りUID文字列」として保存する
+// （下の secrets: [...] 経由で process.env.ALLOWED_UIDS に注入される）。
+// UID自体は署名付きIDトークンなしには認証に使えないので秘密情報ではないが、
+// 既に秘密情報の受け渡しに使っている Secret Manager と運用経路を一本化するために採用した。
 
 const MODEL = "claude-opus-4-8";
 const MAX_TOKENS_CAP = 8000;
@@ -24,7 +24,7 @@ const MAX_TOKENS_CAP = 8000;
 // 将来は req.body.intent で refine / generate / interview / scout に分岐させる。
 exports.ai = onRequest(
   {
-    secrets: ["ANTHROPIC_API_KEY"],
+    secrets: ["ANTHROPIC_API_KEY", "ALLOWED_UIDS"],
     region: "asia-northeast1",
     timeoutSeconds: 300,
     maxInstances: 5,
@@ -51,7 +51,20 @@ exports.ai = onRequest(
     } catch (e) {
       return res.status(401).json({ error: "invalid token" });
     }
-    if (ALLOWED_UIDS.size > 0 && !ALLOWED_UIDS.has(uid)) {
+    // fail-closed: allowlist が空（未設定・カンマ区切りの解析結果が空・読み込み失敗）なら
+    // 誰であっても拒否する。「設定漏れ→誰でも通る」ではなく「設定漏れ→誰も通らない」側に倒す。
+    let allowedUids;
+    try {
+      allowedUids = new Set(
+        (process.env.ALLOWED_UIDS || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      );
+    } catch (e) {
+      allowedUids = new Set();
+    }
+    if (allowedUids.size === 0 || !allowedUids.has(uid)) {
       return res.status(403).json({ error: "not allowed" });
     }
 

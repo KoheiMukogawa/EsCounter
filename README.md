@@ -18,7 +18,7 @@
   │     companies[]（設問→草案の階層）/ materials[]（自分史・ガクチカ等）/ guidelines / aiUsage
   └─ fetch → Cloud Functions `ai` (asia-northeast1)
                 ├─ Firebase IDトークン検証
-                ├─ UID allowlist（本人＋弟）
+                ├─ UID allowlist（Secret Manager `ALLOWED_UIDS`、fail-closed）
                 └─ Claude API（Secret Manager の鍵）→ SSEで中継
 ```
 
@@ -37,11 +37,13 @@
 
 ### 3. なぜ Claude API を直接叩かず Cloud Functions を挟んだか
 
-`functions/index.js` の関数 `ai` は、Firebase IDトークンを `admin.auth().verifyIdToken()` で検証し、さらに `ALLOWED_UIDS`（本人＋弟の2 UID）に一致する場合だけ Claude API へリクエストを中継する。Claude の APIキー（`sk-ant-…`）は Google Secret Manager にのみ存在し、`process.env.ANTHROPIC_API_KEY` として関数内で参照されるだけで、クライアントにもリポジトリにも一切置かれない。フロントから直接 Anthropic API を叩く案は採らなかった。ブラウザの JS にAPIキーを埋め込めば誰でも抜き取れてしまい、作者の課金枠を他人が消費できてしまうため、これは選択肢にすらならない。Cloud Functions を挟むことで「秘密鍵の非公開」「本人確認（IDトークン）」「利用者の限定（UID allowlist）」の3段の防御を、フロントのコードを一切変えずに実現している。
+`functions/index.js` の関数 `ai` は、Firebase IDトークンを `admin.auth().verifyIdToken()` で検証し、さらに許可UID一覧に一致する場合だけ Claude API へリクエストを中継する。Claude の APIキー（`sk-ant-…`）は Google Secret Manager にのみ存在し、`process.env.ANTHROPIC_API_KEY` として関数内で参照されるだけで、クライアントにもリポジトリにも一切置かれない。フロントから直接 Anthropic API を叩く案は採らなかった。ブラウザの JS にAPIキーを埋め込めば誰でも抜き取れてしまい、作者の課金枠を他人が消費できてしまうため、これは選択肢にすらならない。Cloud Functions を挟むことで「秘密鍵の非公開」「本人確認（IDトークン）」「利用者の限定（UID allowlist）」の3段の防御を、フロントのコードを一切変えずに実現している。
+
+このリポジトリは public であるため、実在する個人（作者・弟）を一意に指すUIDをコード中に平文で置くのは避け、Secret Manager の `ALLOWED_UIDS`（カンマ区切りのUID文字列。`ANTHROPIC_API_KEY` と同じ `secrets: [...]` 経由で `process.env.ALLOWED_UIDS` に注入）として外部化している。UID自体は署名付きIDトークンなしには認証に使えないため秘密情報ではないが、既に秘密情報の受け渡しに使っている Secret Manager と運用経路を一本化するために採用した。判定は **fail-closed**：allowlist が空（未設定・解析結果が空・読み込み失敗）の場合は、IDトークンの検証に成功した相手であっても全員拒否する。これは「設定漏れ→誰でも通ってしまう」より「設定漏れ→誰も通らない」方が安全という判断で、外部化前の実装（allowlistが空なら判定自体をスキップしていた）から意図的に変更した点。
 
 ## Firebase の Web API キーについて
 
-`index.html` に Firebase の `apiKey`（`AIzaSy...`）が直書きされているが、これは Firebase の仕様上正しい。この `apiKey` はプロジェクトを識別するためのものであり、秘密情報ではない（公開してよい値として Firebase 公式ドキュメントでも明記されている）。実際のアクセス制御は、Firestore 側は本リポジトリの `firestore.rules`（`request.auth.uid == userId` で本人のみ read/write）、AI機能側は `functions/index.js` の IDトークン検証と UID allowlist が担っている。秘密として守るべきなのは Claude API キーの方で、それは前述のとおり Secret Manager にのみ置かれている。
+`index.html` に Firebase の `apiKey`（`AIzaSy...`）が直書きされているが、これは Firebase の仕様上正しい。この `apiKey` はプロジェクトを識別するためのものであり、秘密情報ではない（公開してよい値として Firebase 公式ドキュメントでも明記されている）。実際のアクセス制御は、Firestore 側は本リポジトリの `firestore.rules`（`request.auth.uid == userId` で本人のみ read/write）、AI機能側は `functions/index.js` の IDトークン検証と UID allowlist が担っている。秘密として守るべきなのは Claude API キーの方で、それは前述のとおり Secret Manager にのみ置かれている（UID allowlist も同じ Secret Manager 経由で外部化しているが、これは秘密保持のためではなく運用経路の一本化のため）。
 
 ## Firestore セキュリティルール
 

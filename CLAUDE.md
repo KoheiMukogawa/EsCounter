@@ -29,7 +29,7 @@ ESM（ES Manager）= 就活のエントリーシート(ES)を一元管理する�
 ## セキュリティモデル（重要）
 - **Claude APIキー（sk-ant-…）は本物の秘密** → Google Secret Manager に格納（`ANTHROPIC_API_KEY`）。フロントにもリポジトリにも**絶対に置かない**。新しいキー版を作ったら**再デプロイで反映**。
 - **Firebaseの apiKey は秘密ではない**（公開してよい識別子）。`index.html` にあってOK。
-- **アクセス制御**：`functions/index.js` の `ALLOWED_UIDS` で許可ユーザーを本人＋弟の2 UIDに限定。空にすると「ログインできる全員が作者の課金でClaudeを叩ける」ので注意。
+- **アクセス制御**：`functions/index.js` が許可ユーザーを本人＋弟の2 UIDに限定。UID一覧は Secret Manager `ALLOWED_UIDS`（カンマ区切り文字列、`ANTHROPIC_API_KEY` と同じ `secrets: [...]` 経由）として外部化済み（public リポジトリに実UIDを平文で置かないため）。**fail-closed**：allowlistが空・未設定・読み込み失敗なら誰であっても拒否する（旧実装は空なら判定自体をスキップしていた穴があったため、外部化と同時に修正済み）。
 - **CORS**：`https://koheimukogawa.github.io` ＋ `localhost:8000/5500` のみ許可。
 - **Firestoreルール**：`users/{userId}` を `request.auth != null && request.auth.uid == userId` で本人のみ read/write（テストモードではない・安全）。コンソール管理（リポジトリ未管理）。将来サブコレクション化するならルール拡張が必要。
 
