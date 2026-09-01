@@ -55,11 +55,15 @@
     }
 
         /* ── App ── */
-    #appScreen{display:none;flex-direction:column;height:100vh;}
+    /* dvh はURLバーの分を除いた実際の可視高さ。非対応ブラウザは前行の vh を使う */
+    #appScreen{display:none;flex-direction:column;height:100vh;height:100dvh;}
 
     /* ── Header ── */
     header{position:sticky;top:0;z-index:100;background:var(--header-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:background .2s;flex-shrink:0;}
     .header-top{padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .btn-menu{display:none;flex-shrink:0;width:30px;height:30px;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:15px;line-height:1;cursor:pointer;padding:0;}
+    .btn-menu:hover{border-color:var(--accent);color:var(--accent);}
+    .drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:299;}
     .header-title{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);font-weight:700;}
     .header-right{display:flex;align-items:center;gap:10px;}
     .search-wrap{position:relative;flex:1;max-width:260px;}
@@ -159,6 +163,7 @@
     .ctree-co-sub{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text);font-family:'DM Mono',monospace;margin-top:3px;white-space:nowrap;overflow:hidden;}
     .ctree-co.active .ctree-co-name{color:var(--text);cursor:text;font-size:15px;font-weight:700;letter-spacing:.01em;}
     .ctree-co.submitted .ctree-co-name{color:var(--text3);}
+    .ctree-co.overdue .ctree-co-name{color:var(--text3);}
     .ctree-co-check{width:15px;height:15px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--text);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text2);transition:border-color .15s,color .15s,background .15s;}
     .ctree-co-check:hover{border-color:var(--ok);background:var(--ok);color:#fff;}
     .ctree-co-check:active{transform:scale(.9);}
@@ -216,6 +221,14 @@
     .cbar-btn.active{border-color:var(--ok);color:var(--ok);background:rgba(52,211,153,.1);font-weight:600;}
     .cbar-btn.icon{flex:0 0 auto;padding:4px 8px;}
     .company-bar .btn-result{padding:3px 0;font-size:10px;}
+    /* 落選したときだけ出る「落ちた段階」＋メモ */
+    .cbar-stages{flex-wrap:wrap;gap:4px;}
+    .btn-stage{font-size:10px;padding:4px 7px;min-height:26px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;white-space:nowrap;}
+    .btn-stage:hover{border-color:var(--text2);color:var(--text2);}
+    .btn-stage.active{border-color:var(--danger);background:rgba(248,113,113,.12);color:var(--danger);font-weight:600;}
+    .cbar-memo{width:100%;font-family:inherit;font-size:11px;padding:5px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;}
+    .cbar-memo:focus{border-color:var(--accent);}
+    .cbar-memo::placeholder{color:var(--text3);}
 
     /* ── Main ── */
     .main-content{flex:1;overflow-y:auto;padding:24px;}
@@ -291,7 +304,7 @@
     .btn-cancel:hover{border-color:var(--text2);color:var(--text2);}
 
     /* ── Add company modal ── */
-    #addCompanyModal{max-width:460px;max-height:85vh;overflow-y:auto;}
+    #addCompanyModal{max-width:460px;max-height:85vh;max-height:85dvh;overflow-y:auto;}
     .modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:14px;}
     .modal-field{display:flex;flex-direction:column;gap:5px;}
     .modal-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-weight:500;}
@@ -313,7 +326,6 @@
     .save-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
     .dot-ex{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 
-    @media(max-width:640px){.sidebar{width:180px;}.progress-wrap{display:none;}}
     /* ── Memo accordion ── */
     .memo-accordion{border-top:1px solid var(--border);}
     .memo-toggle{display:flex;align-items:center;gap:8px;padding:9px 22px;cursor:pointer;background:var(--surface2);transition:background .15s;user-select:none;}
@@ -340,13 +352,13 @@
     .chat-send:disabled{opacity:.4;cursor:default;}
     .chat-actions{display:flex;justify-content:flex-end;padding:0 22px 12px;background:var(--surface2);}
     /* ── 自分史インタビュー modal ── */
-    #ivModal{max-width:560px;height:80vh;display:flex;flex-direction:column;overflow:hidden;}
+    #ivModal{max-width:560px;height:80vh;height:80dvh;display:flex;flex-direction:column;overflow:hidden;}
     #ivModal .chat-log{flex:1;max-height:none;border-top:none;}
 
     /* ── 素材庫 modal ── */
     #materialBg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:16px;}
     #materialBg.open{display:flex;}
-    .material-modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:820px;height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.4);}
+    .material-modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:820px;height:80vh;height:80dvh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.4);}
     .material-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
     .material-head h2{font-size:15px;font-weight:700;color:var(--text);}
     .material-body{display:flex;flex:1;overflow:hidden;}
@@ -384,6 +396,80 @@
     .btn-mat-del:hover{border-color:var(--danger);color:var(--danger);}
     .btn-material{font-size:11px;height:28px;padding:0 12px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
     .btn-material:hover{border-color:var(--accent);color:var(--accent);}
+
+    /* ══════════════════════════════════════════════════════════════
+       レスポンシブ。他のルールを確実に上書きするため、必ず <style> の末尾に置くこと。
+       メディアクエリは詳細度を上げないので、同一詳細度なら後に書いたほうが勝つ
+       （例: .material-modal は下の方で height:80dvh を持つ）
+       ══════════════════════════════════════════════════════════════ */
+    /* ══ スマホ（ブレークポイントはここ1本だけ） ══ */
+    @media(max-width:640px){
+      .progress-wrap{display:none;}
+
+      /* ── サイドバー → 左からのドロワー ── */
+      .btn-menu{display:flex;}
+      .sidebar{position:fixed;top:0;bottom:0;left:0;z-index:300;width:min(300px,84vw);
+               border-right:1px solid var(--border);box-shadow:4px 0 24px rgba(0,0,0,.35);
+               transform:translateX(-100%);transition:transform .22s ease;}
+      body.drawer-open .sidebar{transform:none;}
+      body.drawer-open .drawer-backdrop{display:block;}
+
+      /* ── ヘッダーを1行に収める ── */
+      .header-top{padding:8px 10px;gap:8px;}
+      .logo-long{display:none;}          /* ES Manager → ESM */
+      #zoomCtrl{display:none;}           /* 執筆用。PCで使える */
+      .usage-chip{display:none;}         /* 参考情報。PCで見られる */
+      .sync-status span{display:none;}   /* ドットだけ残す（同期の生死は見えるべき） */
+      .theme-toggle{width:48px;}
+      .theme-toggle .t-knob{transform:translateX(20px);}
+      [data-theme="light"] .theme-toggle .t-knob{transform:translateX(0);}
+      .search-wrap{max-width:none;}
+      /* 候補が細くならないよう画面幅いっぱいに出す */
+      .search-results{position:fixed;left:8px;right:8px;top:48px;}
+
+      /* ── 本文の余白を削る（実効幅 283px → 331px） ── */
+      .main-content{padding:12px 8px;}
+      .q-header{padding:14px 14px 12px;}
+      .q-textarea{padding:14px;}
+      .draft-bar{padding:8px 14px;}
+      .q-toolbar{padding:10px 14px 8px;}
+
+      /* ── 16px 未満だと iOS Safari が入力時に勝手にズームする ── */
+      .search-input,.q-title-input,.q-limit-input,.modal-input,.draft-name,.cbar-memo{font-size:16px;}
+      .q-limit-input{width:84px;}
+      .draft-name{max-width:120px;}
+      /* 本文はPCのズーム設定を持ち込むので、縮めていても16pxを下回らせない */
+      .q-textarea{font-size:max(16px, calc(14px * var(--textarea-zoom,1)));}
+
+      /* ── 指で押せる高さを確保する ── */
+      .company-bar .btn-result{min-height:30px;}
+      .btn-stage{padding:6px 7px;min-height:30px;}
+      .btn-draft{min-height:32px;}
+      .year-tab{min-height:32px;display:flex;align-items:center;}
+      .sidebar-add{padding:6px 10px;margin:-6px -10px;}
+
+      /* ── モーダルは全画面（中央寄せだとソフトキーボードに隠れる） ── */
+      .modal-bg,#materialBg{padding:0;}
+      .modal,.material-modal{border-radius:0;height:100dvh;display:flex;flex-direction:column;}
+      /* 一部のモーダルは style="max-width:360px" をインラインで持つので !important でしか上書きできない */
+      .modal{max-width:none!important;}
+      /* id指定は .modal(クラス)より強いので、max-width/max-height/height をここで指定し直す。
+         自前の overflow-y も打ち消し、スクロールは .modal-body に任せる */
+      #addCompanyModal,#helpModal,#ivModal,.material-modal{max-width:none;max-height:none;height:100dvh;}
+      #addCompanyModal,#helpModal{overflow-y:visible;}
+      .modal-body{flex:1;overflow-y:auto;}
+      .modal-head,.modal-foot{flex-shrink:0;}
+      /* 作業行は名前欄が約150pxしか残らないので2段に折り返す */
+      .task-row{flex-wrap:wrap;}
+      .task-due{flex:1 0 100%;}
+    }
+
+    /* ホバーできない端末（タッチ）。画面幅ではなく入力方式の判定なので上とは別の軸 */
+    @media(hover:none){
+      .btn-copy{opacity:1;}                        /* hover依存だとタッチでは永久に出ない */
+      .ctree-co.active .ctree-close{opacity:1;}    /* 誤タップを避けるため選択中の企業だけ */
+    }
+
   </style>
 </head>
 <body>
@@ -456,7 +542,8 @@
   </div>
   <header>
     <div class="header-top">
-      <span style="font-size:13px;font-weight:700;letter-spacing:.03em;"><span style="color:#2563EB;">ES</span><span style="color:var(--text3);"> </span><span style="color:#2563EB;">M</span><span style="color:var(--text3);">anager</span></span>
+      <button class="btn-menu" id="btnMenu" title="企業一覧を開く" aria-label="企業一覧を開く">☰</button>
+      <span style="font-size:13px;font-weight:700;letter-spacing:.03em;"><span style="color:#2563EB;">ES</span><span class="logo-long" style="color:var(--text3);"> </span><span style="color:#2563EB;">M</span><span class="logo-long" style="color:var(--text3);">anager</span></span>
       <div class="search-wrap" id="searchWrap">
         <span class="search-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg></span>
         <input class="search-input" id="searchInput" type="text" placeholder="ESを検索...">
@@ -495,6 +582,8 @@
     </div>
   </header>
 
+  <!-- スマホでドロワーを開いたときの背景。タップで閉じる -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
   <div class="app-body">
     <div class="sidebar">
       <div class="sidebar-header">
@@ -877,6 +966,7 @@
       document.getElementById('appScreen').style.display='flex';
       setSyncStatus('synced');
       render();
+      openDrawerOnStartup();
       if(companies.length===0) offerLocalStorageRestore();
     } else {
       currentUser=null; companies=[]; activeCompanyId=null; activeYear=null; dataLoaded=false;
@@ -934,7 +1024,7 @@
             if(yearTabsOn()) activeYear=coYear(c);
             activeCompanyId=c.id;c.activeQId=q.id;
             results.classList.remove('open');input.value='';
-            render();
+            render();closeDrawerOnQuestionPick();
           });
           results.appendChild(item);
         });
@@ -986,6 +1076,18 @@
   }
 
   // ── Render ──
+  // ── ドロワー（≤640px でサイドバーを左からのオーバーレイにする） ──
+  // 状態は body の drawer-open クラス1つだけ。CSSと同じ640pxを使い二重管理にしない
+  const isMobile=()=>window.matchMedia('(max-width:640px)').matches;
+  function setDrawer(open){document.body.classList.toggle('drawer-open',open);}
+  function isDrawerOpen(){return document.body.classList.contains('drawer-open');}
+  function toggleDrawer(){setDrawer(!isDrawerOpen());}
+  // 企業を選んだ時点では閉じない（企業選択＝設問の展開なので、続けて設問を選ばせる）。
+  // 設問を選んで初めて本文へ移るので、そこで閉じる
+  function closeDrawerOnQuestionPick(){if(isMobile()) setDrawer(false);}
+  // 確認中心の用途なので、スマホでは開いたら企業一覧が見えている状態から始める
+  function openDrawerOnStartup(){if(isMobile()) setDrawer(true);}
+
   function render(){normalizeYear();renderYearTabs();renderCompanyTree();renderCompanyBar();renderMain();renderTitle();renderUsage();}
 
   function renderTitle(){
@@ -1015,33 +1117,51 @@
     items.sort((a,b)=>a.due<b.due?-1:a.due>b.due?1:0);
     return items[0];
   }
+  // 今日を 'YYYY-MM-DD'（<input type=date> と同じ形式）で返す。文字列のまま比較できる
+  function todayStr(){
+    const d=new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  // サイドバーの並びグループ。小さいほど上
+  // 0=期限内にやることあり / 1=やることなし（提出済・結果待ち）/ 2=落選 / 3=期限切れ
+  // 落選を先に見るので、落選企業に期限切れの作業が残っていても二重には沈まない
+  function sortRank(c){
+    if(c.submitted&&c.result==='fail') return 2;
+    const nd=nextDue(c);
+    if(!nd) return 1;
+    return nd.due<todayStr()?3:0;
+  }
+  // 同じグループ内: 期限内は近い順、期限切れは直近に切れた順（古いものほど下）、他は元の並び順
+  function compareCompanies(a,b,list){
+    const ra=sortRank(a),rb=sortRank(b);
+    if(ra!==rb) return ra-rb;
+    if(ra===0||ra===3){
+      const da=nextDue(a).due,db=nextDue(b).due;
+      if(da!==db) return (da<db?-1:1)*(ra===3?-1:1);
+    }
+    return list.indexOf(a)-list.indexOf(b);
+  }
+  // 落選した段階。ES を通過していたかが一覧で分かるようにする
+  const FAIL_STAGES=[{v:'es',label:'ES'},{v:'webtest',label:'Webテスト'},{v:'1st',label:'1次'},{v:'2nd',label:'2次'},{v:'final',label:'最終'}];
+  function failBadgeLabel(c){
+    const s=FAIL_STAGES.find(x=>x.v===c.failStage);
+    return s?s.label+'落ち':'落選';
+  }
   function renderCompanyTabs(){renderCompanyTree();} // 互換: 既存呼び出し用
   function renderCompanyTree(){
     const tree=document.getElementById('companyTree');
     if(!tree) return;
     tree.innerHTML='';
-    // sort: 次にやることがある(期限が近い順) → やることなし(結果待ち等) → 落選
-    const sortRank=c=>{
-      if(c.submitted&&c.result==='fail') return 2;
-      if(nextDue(c)) return 0;
-      return 1;
-    };
-    const sorted=[...visibleCompanies()].sort((a,b)=>{
-      const ra=sortRank(a),rb=sortRank(b);
-      if(ra!==rb) return ra-rb;
-      if(ra===0){
-        const da=nextDue(a).due,db=nextDue(b).due;
-        if(da!==db) return da<db?-1:1;
-      }
-      return companies.indexOf(a)-companies.indexOf(b);
-    });
+    // sort: 期限内(近い順) → やることなし(結果待ち等) → 落選 → 期限切れ
+    const sorted=[...visibleCompanies()].sort((a,b)=>compareCompanies(a,b,companies));
     sorted.forEach(c=>{
       const isActive=c.id===activeCompanyId;
       const dead=c.submitted&&c.result==='fail';
       const nd=dead?null:nextDue(c);
+      const overdue=!!nd&&nd.due<todayStr();
       const row=document.createElement('div');
-      // 「やることが無い」企業だけ薄くする。提出済みでも作業が残っていれば薄くしない
-      row.className='ctree-co'+(isActive?' active':'')+((c.submitted&&!nd)?' submitted':'');
+      // 「やることが無い」企業と期限切れの企業を薄くする。提出済みでも期限内の作業が残っていれば薄くしない
+      row.className='ctree-co'+(isActive?' active':'')+((c.submitted&&!nd)?' submitted':'')+(overdue?' overdue':'');
 
       const caret=document.createElement('span');
       caret.className='ctree-caret'+((isActive&&!c.collapsed)?' open':'');caret.textContent='▶';
@@ -1083,7 +1203,7 @@
 
       // ステータス: 落選 → 次にやることの残り日数 → 結果 → 提出済 のいずれか1つ
       if(c.submitted&&c.result==='fail'){
-        const rb=document.createElement('span');rb.className='ctree-badge fail';rb.textContent='落選';row.appendChild(rb);
+        const rb=document.createElement('span');rb.className='ctree-badge fail';rb.textContent=failBadgeLabel(c);row.appendChild(rb);
       } else if(nd){
         const dl=deadlineState(nd.due);
         if(dl.label){const badge=document.createElement('span');badge.className='ctree-badge dl '+dl.cls;badge.textContent=dl.label;row.appendChild(badge);}
@@ -1160,7 +1280,7 @@
       const [moved]=qsArr.splice(fi,1);qsArr.splice(ti,0,moved);
       renderCompanyTree();scheduleSave();
     });
-    item.addEventListener('click',()=>{c.activeQId=q.id;renderCompanyTree();renderMain();scheduleSave();});
+    item.addEventListener('click',()=>{c.activeQId=q.id;renderCompanyTree();renderMain();closeDrawerOnQuestionPick();scheduleSave();});
     return item;
   }
 
@@ -1188,7 +1308,12 @@
         <button class="btn-result pass${c.result==='pass'?' active':''}" id="cbarPass">通過</button>
         <button class="btn-result pending${c.result==='pending'?' active':''}" id="cbarPending">結果待ち</button>
         <button class="btn-result fail${c.result==='fail'?' active':''}" id="cbarFail">落選</button>
-      </div>`:''}`;
+      </div>
+      ${c.result==='fail'?`
+      <div class="cbar-actions cbar-stages">
+        ${FAIL_STAGES.map(st=>`<button class="btn-stage${c.failStage===st.v?' active':''}" data-stage="${st.v}">${st.label}</button>`).join('')}
+      </div>
+      <input class="cbar-memo" id="cbarFailMemo" placeholder="メモ（例: 逆質問で詰まった）">`:''}`:''}`;
     if(c.url&&c.loginId){
       document.getElementById('cbarUrl').addEventListener('click',()=>{
         navigator.clipboard.writeText(c.loginId).then(()=>{
@@ -1200,14 +1325,37 @@
     document.getElementById('cbarEdit').addEventListener('click',()=>openEditCompanyModal(c));
     document.getElementById('cbarSubmit').addEventListener('click',()=>{
       c.submitted=!c.submitted;
-      if(!c.submitted) c.result=null;
+      if(!c.submitted) setResult(c,null);
       renderCompanyTree();renderCompanyBar();scheduleSave();
     });
     if(c.submitted){
-      document.getElementById('cbarPass').addEventListener('click',()=>{c.result=c.result==='pass'?null:'pass';renderCompanyTree();renderCompanyBar();scheduleSave();});
-      document.getElementById('cbarPending').addEventListener('click',()=>{c.result=c.result==='pending'?null:'pending';renderCompanyTree();renderCompanyBar();scheduleSave();});
-      document.getElementById('cbarFail').addEventListener('click',()=>{c.result=c.result==='fail'?null:'fail';renderCompanyTree();renderCompanyBar();scheduleSave();});
+      document.getElementById('cbarPass').addEventListener('click',()=>{setResult(c,c.result==='pass'?null:'pass');renderCompanyTree();renderCompanyBar();scheduleSave();});
+      document.getElementById('cbarPending').addEventListener('click',()=>{setResult(c,c.result==='pending'?null:'pending');renderCompanyTree();renderCompanyBar();scheduleSave();});
+      document.getElementById('cbarFail').addEventListener('click',()=>{setResult(c,c.result==='fail'?null:'fail');renderCompanyTree();renderCompanyBar();scheduleSave();});
     }
+    if(c.submitted&&c.result==='fail'){
+      el.querySelectorAll('.btn-stage').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          const v=btn.dataset.stage;
+          if(c.failStage===v) delete c.failStage; else c.failStage=v;
+          renderCompanyTree();renderCompanyBar();scheduleSave();
+        });
+      });
+      // value= に直接埋めるとメモ内の " で壊れるので、描画後に代入する
+      const memo=document.getElementById('cbarFailMemo');
+      memo.value=c.failMemo||'';
+      memo.addEventListener('input',()=>{
+        const v=memo.value.trim();
+        if(v) c.failMemo=v; else delete c.failMemo;
+        scheduleSave();
+      });
+    }
+  }
+
+  // 選考結果を切り替える。落選以外になったら「落ちた段階」とメモは残さない
+  function setResult(c,v){
+    c.result=v;
+    if(v!=='fail'){delete c.failStage;delete c.failMemo;}
   }
 
   // ── 企業モーダル: 期限つき作業の行 ──
@@ -1912,7 +2060,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
     const id=genId(),did=genId();
     if(!c.questions) c.questions=[];
     c.questions.push({id,label:'',limit:400,activeDraftId:did,drafts:[{id:did,name:'草案1',text:'',done:false}]});
-    c.activeQId=id;render();scheduleSave();
+    c.activeQId=id;render();closeDrawerOnQuestionPick();scheduleSave();
     setTimeout(()=>{const el=document.getElementById('cardLabel');if(el) el.focus();},50);
   }
   function removeQuestion(companyId,qId){
@@ -1943,6 +2091,9 @@ ${cur||'(まだ空)'}`+guidelineBlock();
   document.getElementById('helpBg').addEventListener('click',e=>{if(e.target===document.getElementById('helpBg')) document.getElementById('helpBg').classList.remove('open');
     document.getElementById('addDraftBg').classList.remove('open');});
 
+  document.getElementById('btnMenu').addEventListener('click',e=>{e.stopPropagation();toggleDrawer();});
+  document.getElementById('drawerBackdrop').addEventListener('click',()=>setDrawer(false));
+
   document.addEventListener('keydown',e=>{
     const tag=document.activeElement.tagName;
     const ce=document.activeElement.contentEditable;
@@ -1953,6 +2104,7 @@ ${cur||'(まだ空)'}`+guidelineBlock();
       document.getElementById('helpBg').classList.remove('open');
       document.getElementById('addDraftBg').classList.remove('open');
       document.getElementById('materialBg').classList.remove('open');
+      setDrawer(false);
     }
   });
 

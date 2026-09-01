@@ -20,7 +20,7 @@ ESM（ES Manager）= 就活のエントリーシート(ES)を一元管理する�
 - **ホスティング**：GitHub Pages、`main` ブランチから配信。本番 = https://koheimukogawa.github.io/ESM/ 。
   - ⚠️ GitHub Pages（無料プラン）は **publicリポジトリ必須**。非公開化するとサイトが落ちる（Firebase Hosting に移行する場合を除く）。
 - **認証**：Firebase Auth（Googleログイン）。Firebaseプロジェクト = `escounter-d9db7`。
-- **DB**：Firestore。データモデルは `users/{uid}` の **1ドキュメント**（companies→questions→drafts／companies→tasks＝期限つき作業 `{id,name,due,done}`／`c.collapsed`＝設問ツリーの開閉状態／`c.year`＝卒業年度 27|28（**任意**・未設定なら書き込まれない）と `activeYear`（同上）／materials＝素材庫: 自分史・ガクチカ・自己PR・志望動機の軸・その他）。草案 draft＝`{id,name,text,done,memo,chat[]}`（`chat` はAI相談の会話履歴 `{role,content}`）。ローカルに5世代バックアップ。
+- **DB**：Firestore。データモデルは `users/{uid}` の **1ドキュメント**（companies→questions→drafts／companies→tasks＝期限つき作業 `{id,name,due,done}`／`c.collapsed`＝設問ツリーの開閉状態／`c.year`＝卒業年度 27|28（**任意**・未設定なら書き込まれない）と `activeYear`（同上）／`c.result`＝選考結果 pass|pending|fail と `c.failStage`＝落選した段階 es|webtest|1st|2nd|final・`c.failMemo`＝落選メモ（どちらも**任意**・落選以外に変えると削除される）／materials＝素材庫: 自分史・ガクチカ・自己PR・志望動機の軸・その他）。草案 draft＝`{id,name,text,done,memo,chat[]}`（`chat` はAI相談の会話履歴 `{role,content}`）。ローカルに5世代バックアップ。
 - **AIバックエンド**：Cloud Functions for Firebase（2nd gen / Node20）。関数 `ai`（asia-northeast1）が「Firebase IDトークン検証 → Claude API へ SSE ストリーミング中継」する**薄いプロキシ**。ソースは `functions/`。
   - URL: `https://asia-northeast1-escounter-d9db7.cloudfunctions.net/ai`（`index.html` の `AI_ENDPOINT` と一致）。
   - フロントの共通入口は `index.html` の `callAI({system, messages, maxTokens, onDelta})`。**全AI機能はここを通す。**
@@ -54,6 +54,8 @@ ESM（ES Manager）= 就活のエントリーシート(ES)を一元管理する�
 - **Phase 2 ②（切り口提案・軽量版）= ✅**（2026-06-21）：「切り口」ボタン→Claudeが書く方向性を3つチャット提案→会話で育てる（"3案フル生成"は廃止＝草案を散らかさない）。あわせて：ヘッダをアカウント(アバター)メニューに集約（📚素材庫/📝Claudeへの指示/使い方）／ガイドを「📝 Claudeへの指示」に簡素化／複製ボタン廃止。
 - **自分史インタビュー（最小版）= ✅**（2026-06-22）：素材庫の「💬 対話で自分史を作る」→Claudeが問答で引き出し→「素材庫に保存」で `materials` に {cat:'自分史'} を生成（`ivChat` で会話保持・接地）。素材庫が空のとき初回誘導（強制しない）。王道「①素材を貯める」をAIが支援。
 - **期限つき作業＋選考順ソート = ✅**（2026-08-21）：企業に `tasks[]`（期限つき作業）を追加し、企業ツリーを `nextDue()` 由来の「次にやることが近い順」に並べ替え。ES提出済みでも未完了作業があれば沈まない。面接など固定日時・通知・カレンダービューは非目標（spec 参照）。
+- **モバイルレイアウト対応 = ✅**（2026-09-01）：≤640px でサイドバーを**ドロワー**化（`body.drawer-open`＋`setDrawer()`）。企業選択では閉じず、**設問を選んだときだけ閉じる**。モバイル起動時は開いた状態。ヘッダーは1行維持（ロゴ`ESM`／ズーム・使用量を非表示／同期はドットのみ）。iOSの自動ズーム対策で入力欄を16pxに、`dvh` 併記で下端切れを解消。hover依存で**タッチ端末から押せなかった**本文コピーと企業×を修正。⚠️ **レスポンシブCSSは `<style>` の末尾に置くこと**（メディアクエリは詳細度を上げないため、後方定義に負ける）。spec: `docs/superpowers/specs/2026-09-01-mobile-layout-design.md`
+- **期限切れを最下部へ＋落選段階の記録 = ✅**（2026-09-01）：サイドバーの並びを「期限内(近い順) → やることなし → 落選 → **期限切れ**」の4グループに変更（`sortRank()`／`compareCompanies()`）。期限切れは日付が最も古いため以前は最上部に居座っていた。あわせて落選時に「落ちた段階」＋1行メモを記録でき、バッジが `ES落ち`／`1次落ち` になる＝**ESを通過していたかが一覧で分かる**。段階ボタンは折り返し・メモは640px以下で16px（iOSの自動ズーム回避）。
 - **年度タブ（27卒/28卒）= ✅**（2026-08-28）：同じアカウントで2周分の就活をする人向けに、サイドバーを年度で絞り込む。**使わない人には何も起きない**（年度を持つ企業が2年度そろうまでタブは出ず、`c.year`/`activeYear` も保存されない）。年度未設定の企業は先頭年度（27卒）に属するものとして扱い、データは書き換えない。検索は年度を横断する。
 - **次の候補**：(c) Phase 3 ④企業提案（Web検索で根拠付け・"参考提案"に留める。LLM記憶だけの断定は知識カットオフ＆ハルシネーションで危険）／自分史インタビューの「ガクチカ版」。
 - 詳細な作業履歴は `PROGRESS.md`。
