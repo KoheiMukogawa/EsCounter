@@ -271,6 +271,9 @@
     .progress-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
     .progress-fill{height:100%;border-radius:2px;transition:width .15s ease,background .2s;}
     .progress-label{font-size:11px;color:var(--text3);margin-top:6px;font-family:'DM Mono',monospace;}
+    .btn-qnav{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;transition:all .15s;flex-shrink:0;padding:0;}
+    .btn-qnav:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+    .btn-qnav:disabled{opacity:.3;cursor:default;}
     .btn-done{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;flex-shrink:0;color:var(--text3);}
     .btn-done:hover{border-color:var(--ok);color:var(--ok);}
     .btn-done.done{border-color:var(--ok);background:var(--ok);color:#fff;}
@@ -445,6 +448,7 @@
       .company-bar .btn-result{min-height:30px;}
       .btn-stage{padding:6px 7px;min-height:30px;}
       .btn-draft{min-height:32px;}
+      .btn-qnav{width:32px;height:32px;}
       .year-tab{min-height:32px;display:flex;align-items:center;}
       .sidebar-add{padding:6px 10px;margin:-6px -10px;}
 
@@ -1408,6 +1412,29 @@
   function renderSidebar(){renderCompanyTree();} // 互換: 既存呼び出し用
 
   // ── Main card ──
+  // ── 設問の前後移動 ──
+  // 現在地はヘッダーに「設問 2 / 5」として出し、移動の矢印はツールバー（完了ボタンの隣）に置く。
+  // 次へ行きたくなるのは読み終えた＝ページ下端にいるときなので、上のヘッダーに矢印を置くと毎回戻ることになる
+  function qIndex(c){
+    return (c.questions||[]).findIndex(q=>q.id===c.activeQId);
+  }
+  // 矢印の表示可否・ラベル・移動先。端では移動先を null にする（ループしない）
+  function qNavState(c){
+    const qs=c.questions||[], i=qIndex(c);
+    if(i<0) return {show:false,label:'',prevId:null,nextId:null};
+    return {
+      show:qs.length>1,
+      label:`設問 ${i+1} / ${qs.length}`,
+      prevId:i>0?qs[i-1].id:null,
+      nextId:i<qs.length-1?qs[i+1].id:null,
+    };
+  }
+  function gotoQuestion(c,qid){
+    if(!qid) return;
+    c.activeQId=qid;
+    renderCompanyTree();renderMain();scheduleSave();
+  }
+
   function renderMain(){
     const area=document.getElementById('mainContent');
     const empty=document.getElementById('emptyState');
@@ -1434,7 +1461,7 @@
     card.className='question-card';
     card.innerHTML=`
       <div class="q-header">
-        <span class="q-sublabel">設問文</span>
+        <span class="q-sublabel" id="cardQNum"></span>
         <textarea class="q-title-input" rows="2" placeholder="例：学生時代に最も力を入れたことを教えてください（400字）" id="cardLabel"></textarea>
         <div class="q-meta">
           <div class="q-limit-wrap">
@@ -1442,7 +1469,6 @@
             <input type="number" class="q-limit-input" id="cardLimit" min="0" max="9999" step="100" placeholder="400">
             <span>字</span>
           </div>
-          <span style="font-size:11px;color:var(--text3)">※ 制限なしの場合は空欄</span>
         </div>
       </div>
       <div class="draft-bar">
@@ -1472,6 +1498,8 @@
         <div class="q-toolbar-actions">
           <button class="btn-copy-qa" id="btnCopyQA" title="この設問と解答をコピー"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> この設問</button>
           <button class="btn-copy-all" id="btnCopyAll" title="全設問と解答をコピー"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 全設問</button>
+          <button class="btn-qnav" id="btnQPrev" title="前の設問">←</button>
+          <button class="btn-qnav" id="btnQNext" title="次の設問">→</button>
           <button class="btn-done" id="btnDone" title="この草案を完了にする">✓</button>
         </div>
       </div>
@@ -1587,6 +1615,16 @@
   }
 
   function fillCard(card,q){
+    const co=activeCompany();
+    const nav=qNavState(co);
+    card.querySelector('#cardQNum').textContent=nav.label;
+    ['#btnQPrev','#btnQNext'].forEach((sel,k)=>{
+      const btn=card.querySelector(sel);
+      btn.style.display=nav.show?'':'none';
+      const to=k===0?nav.prevId:nav.nextId;
+      btn.disabled=!to;
+      btn.addEventListener('click',()=>gotoQuestion(co,to));
+    });
     card.querySelector('#cardLabel').value=q.label||'';
     card.querySelector('#cardLimit').value=q.limit||'';
     const curDraft=activeDraftForQ(q);
